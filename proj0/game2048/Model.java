@@ -114,6 +114,38 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        int size = board.size();
+
+        board.startViewingFrom(side);
+        for (int i = 0; i < size; ++i) {
+            int top = size - 1;
+            for (int j = size - 1; j >= 0; --j) {
+                Tile tile = board.tile(i, j);
+                if (tile != null) {
+                    Tile tile1 = board.tile(i, top);
+                    if (tile1 == null || tile1.value() == tile.value()) {
+                        if (board.move(i, top, tile)) {
+                            score += board.tile(i, top).value();
+                            if (j != top) {
+                                changed = true;
+                            }
+                            --top;
+                        } else {
+                            if (j != top) {
+                                changed = true;
+                            }
+                        }
+                    } else {
+                        board.move(i, --top, tile);
+                        if (j != top) {
+                            changed = true;
+                        }
+                    }
+                }
+            }
+        }
+        board.startViewingFrom(Side.NORTH);
+
         checkGameOver();
         if (changed) {
             setChanged();
