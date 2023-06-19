@@ -67,7 +67,7 @@ class LinkedListDeque<T> implements Deque<T> {
         return toBeRemoved.data;
     }
     public T get(int index) {
-        ItemNode node = sentinel;
+        ItemNode node = sentinel.next;
         for (int i = 0; i < index; ++i)
             node = node.next;
         return node.data;
@@ -75,7 +75,7 @@ class LinkedListDeque<T> implements Deque<T> {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || o.getClass() != this.getClass())
+        if (!(o instanceof Deque))
             return false;
         Deque<?> d = (Deque<?>) o;
         if (size() != d.size())

@@ -73,13 +73,13 @@ class ArrayDeque<T> implements Deque<T> {
     }
     public void printDeque() {
         for (int i = 0, j = start; i < size; ++i, j = next(j))
-            System.out.print(data[j] + "");
+            System.out.print(data[j] + " ");
         System.out.println();
     }
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null || o.getClass() != this.getClass())
+        if (!(o instanceof Deque))
             return false;
         Deque<?> d = (Deque<?>) o;
         if (size() != d.size())
