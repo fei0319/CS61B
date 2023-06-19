@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-class LinkedListDeque<T> implements Deque<T> {
+public class LinkedListDeque<T> implements Deque<T> {
 
     private class ItemNode {
         public T data;
