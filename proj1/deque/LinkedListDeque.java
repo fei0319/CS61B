@@ -109,7 +109,6 @@ public class LinkedListDeque<T> implements Deque<T> {
             return node.data;
         }
     }
-    @Override
     public Iterator<T> iterator() {
         return new DequeIterator();
     }
