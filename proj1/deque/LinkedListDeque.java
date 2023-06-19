@@ -83,7 +83,7 @@ public class LinkedListDeque<T> implements Deque<T> {
             return getRecursive(node.next, index - 1);
     }
     public T getRecursive(int index) {
-        return getRecursive(sentinel.next, 0);
+        return getRecursive(sentinel.next, index);
     }
     @Override
     public boolean equals(Object o) {
