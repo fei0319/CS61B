@@ -28,6 +28,7 @@ class ArrayDeque<T> implements Deque<T> {
         size = 0;
         data = (T[]) new Object[8];
     }
+    @Override
     public void addFirst(T item) {
         if (size == data.length)
             resize(size * 2);
@@ -35,12 +36,14 @@ class ArrayDeque<T> implements Deque<T> {
         start = prev(start);
         ++size;
     }
+    @Override
     public void addLast(T item) {
         if (size == data.length)
             resize(size * 2);
         data[next(start, size)] = item;
         ++size;
     }
+    @Override
     public T removeFirst() {
         if (size == 0)
             return null;
@@ -52,6 +55,7 @@ class ArrayDeque<T> implements Deque<T> {
             resize(Math.max(size, 8));
         return x;
     }
+    @Override
     public T removeLast() {
         if (size == 0)
             return null;
@@ -62,20 +66,21 @@ class ArrayDeque<T> implements Deque<T> {
             resize(Math.max(size, 8));
         return x;
     }
+    @Override
     public T get(int index) {
         return data[next(start, index)];
     }
-    public boolean isEmpty() {
-        return size == 0;
-    }
+    @Override
     public int size() {
         return size;
     }
+    @Override
     public void printDeque() {
         for (int i = 0, j = start; i < size; ++i, j = next(j))
             System.out.print(data[j] + " ");
         System.out.println();
     }
+    @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -102,6 +107,7 @@ class ArrayDeque<T> implements Deque<T> {
             return get(pos++);
         }
     }
+    @Override
     public Iterator<T> iterator() {
         return new DequeIterator();
     }
