@@ -99,10 +99,9 @@ class LinkedListDeque<T> implements Deque<T> {
             return index < size();
         }
         public T next() {
-            T result = node.data;
             node = node.next;
             index += 1;
-            return result;
+            return node.data;
         }
     }
     public Iterator<T> iterator() {
