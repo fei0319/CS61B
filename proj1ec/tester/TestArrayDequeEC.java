@@ -36,11 +36,11 @@ public class TestArrayDequeEC {
                 if (operateFront) {
                     ex = expected.removeFirst();
                     ac = actual.removeFirst();
-                    msg.append("\nRemoveFirst()");
+                    msg.append("\nremoveFirst()");
                 } else {
                     ex = expected.removeLast();
                     ac = actual.removeLast();
-                    msg.append("\nRemoveLast()");
+                    msg.append("\nremoveLast()");
                 }
                 assertEquals(msg.toString(), ex, ac);
             }
