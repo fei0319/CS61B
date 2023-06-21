@@ -57,6 +57,6 @@ public class Commit implements GitletObject {
         this.parents = parents;
     }
     public String sha1() {
-        return Utils.sha1(this);
+        return Utils.sha1((Object) Utils.serialize(this));
     }
 }
