@@ -10,6 +10,6 @@ public class Blob implements GitletObject {
         this.data = Utils.readContents(f);
     }
     public String sha1() {
-        return Utils.sha1(data);
+        return Utils.sha1((Object) data);
     }
 }
