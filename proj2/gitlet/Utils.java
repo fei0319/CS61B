@@ -239,5 +239,6 @@ class Utils {
 
     static void exit(String msg, Object... args) {
         message(msg, args);
+        System.exit(0);
     }
 }

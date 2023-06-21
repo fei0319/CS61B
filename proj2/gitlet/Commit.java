@@ -4,6 +4,7 @@ package gitlet;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date; // TODO: You'll likely use this in this class
 import java.util.HashMap;
 import java.io.File;
@@ -58,5 +59,19 @@ public class Commit implements GitletObject {
     }
     public String sha1() {
         return Utils.sha1((Object) Utils.serialize(this));
+    }
+    public void show() {
+        System.out.println("===");
+        System.out.printf("commit %s\n", sha1());
+        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
+        System.out.printf("Date: %s\n", formatter.format(date));
+        System.out.println(message);
+        System.out.println();
+    }
+    public String[] getParents() {
+        return parents;
+    }
+    public boolean isInitial() {
+        return parents.length == 0;
     }
 }

@@ -36,6 +36,7 @@ public interface GitletObject extends Serializable {
     static public File getPath(File gitletDir, String fullName) {
         String prefix = fullName.substring(0, 2), suffix = fullName.substring(2);
         File targetDir = Utils.join(gitletDir, "objects", prefix);
+        targetDir.mkdirs();
         return Utils.join(targetDir, suffix);
     }
 
