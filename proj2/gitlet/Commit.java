@@ -1,19 +1,13 @@
 package gitlet;
 
-// TODO: any imports you need here
-
-import javax.sql.rowset.serial.SerialBlob;
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Date; // TODO: You'll likely use this in this class
+import java.util.Date;
 import java.util.HashMap;
 import java.io.File;
 
-/** Represents a gitlet commit object.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
- *
- *  @author TODO
+/** Represents a gitlet commit object.<br>
+ *  A Commit object stores message, timestamp, changes and parent commits of a commit.
+ *  @author Fei Pan
  */
 public class Commit implements GitletObject {
 
@@ -21,9 +15,11 @@ public class Commit implements GitletObject {
     private String message;
     /** The timestamp of this Commit */
     private Date date;
-    /** The changes contained in this Commit
-     *  key: File that was modified
-     *  value: SHA1 value of blob that stores the content of the file
+    /** The changes contained in this Commit.
+     *  <p>
+     *  {@code key}: File that was modified<br>
+     *  {@code value}: SHA1 value of blob that stores the content of the file,<br>or null indicating the file is to be deleted
+     *  </p>
      */
     private HashMap<File, String> changes;
     /** The parents of this Commit,
