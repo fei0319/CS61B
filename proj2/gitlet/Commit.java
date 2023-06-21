@@ -18,12 +18,12 @@ public class Commit implements GitletObject {
     /** The changes contained in this Commit.
      *  <p>
      *  {@code key}: File that was modified<br>
-     *  {@code value}: SHA1 value of blob that stores the content of the file,<br>or null indicating the file is to be deleted
+     *  {@code value}: SHA-1 value of blob that stores the content of the file,<br>or null indicating the file is to be deleted
      *  </p>
      */
     private HashMap<File, String> changes;
     /** The parents of this Commit,
-     *  which are represented by their SHA1 values.
+     *  which are represented by their SHA-1 values.
      */
     private String[] parents;
 
@@ -45,7 +45,7 @@ public class Commit implements GitletObject {
      * @param message message
      * @param date date
      * @param changes changes
-     * @param parents SHA1 values of the parents
+     * @param parents SHA-1 values of the parents
      */
     public Commit(String message, Date date, HashMap<File, String> changes, String[] parents) {
         this.message = message;

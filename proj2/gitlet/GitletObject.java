@@ -10,17 +10,17 @@ import java.io.File;
  */
 public interface GitletObject extends Serializable {
     /**
-     * Get SHA1 value of the object.
-     * @return SHA1 value of the object
+     * Get SHA-1 value of the object.
+     * @return SHA-1 value of the object
      */
     String sha1();
 
     /**
-     * Store the object to a path determined by its SHA1 value,
-     * namely {@code <gitletDir>/objects/<SHA1[:2]>/<SHA1[2:]>}.<br>
-     * Will return SHA1 value of the object.
+     * Store the object to a path determined by its SHA-1 value,
+     * namely {@code <gitletDir>/objects/<SHA-1[:2]>/<SHA-1[2:]>}.<br>
+     * Will return SHA-1 value of the object.
      * @param gitletDir the {@code .gitlet} directory
-     * @return SHA1 value of the object
+     * @return SHA-1 value of the object
      */
     default String store(File gitletDir) {
         File target = getPath(gitletDir, sha1());
@@ -41,9 +41,9 @@ public interface GitletObject extends Serializable {
     }
 
     /**
-     * Gets the object with SHA1 value s.
+     * Gets the object with SHA-1 value s.
      * @param gitletDir the {@code .gitlet} directory
-     * @param s SHA1 value
+     * @param s SHA-1 value
      * @return a gitlet object
      */
     static public GitletObject read(File gitletDir, String s) {

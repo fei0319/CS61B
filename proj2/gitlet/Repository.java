@@ -28,21 +28,22 @@ public class Repository {
     /* TODO: fill in the rest of this class. */
 
     /**
-     * Get the SHA1 value of HEAD.
-     * @return SHA1 value of HEAD
+     * Get the SHA-1 value of the specified ref.
+     * @return SHA-1 value of the specified refD
      */
-    public static String getHead() {
-        File f = Utils.join(GITLET_DIR, "HEAD");
+    public static String getRef(String ref) {
+        File f = Utils.join(GITLET_DIR, ref);
         return Utils.readContentsAsString(f);
     }
 
     /**
-     * Set the SHA1 value of HEAD.
-     * @param head SHA1 value of HEAD
+     * Set the SHA1 value of a specified ref.
+     * @param ref the ref to be set
+     * @param val the SHA-1 value to be applied
      */
-    public static void setHead(String head) {
-        File f = Utils.join(GITLET_DIR, "HEAD");
-        Utils.writeContents(f, head);
+    public static void setRef(String ref, String val) {
+        File f = Utils.join(GITLET_DIR, ref);
+        Utils.writeContents(f, val);
     }
 
     /**
@@ -53,14 +54,16 @@ public class Repository {
         if (!GITLET_DIR.exists()) {
             Commit initialCommit = new Commit();
             initialCommit.store(GITLET_DIR);
-            setHead(initialCommit.sha1());
+            setRef("HEAD", initialCommit.sha1());
         }
         else
             Utils.exit("A Gitlet version-control system already exists in the current directory.");
     }
+    public static void add(String fileName) {
+    }
 
     public static void log() {
-        String currentSHA1 = getHead();
+        String currentSHA1 = getRef("HEAD");
         while (true) {
             Commit commit = (Commit) GitletObject.read(GITLET_DIR, currentSHA1);
             commit.show();
