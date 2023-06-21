@@ -4,9 +4,10 @@ import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 
-/** Represents the staging area and can be converted to a commit.<br>
- *  The purpose of implementing GitletObject is to make sure a Stage object can be stored like a GitletObject.
- *  @author Fei Pan
+/**
+ * Represents the staging area and can be converted to a commit.<br>
+ * The purpose of implementing GitletObject is to make sure a Stage object can be stored like a GitletObject.
+ * @author Fei Pan
  */
 public class Stage implements GitletObject {
     private HashMap<File, String> changes;

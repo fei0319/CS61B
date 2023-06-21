@@ -5,9 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.io.File;
 
-/** Represents a gitlet commit object.<br>
- *  A Commit object stores message, timestamp, changes and parent commits of a commit.
- *  @author Fei Pan
+/**
+ * Represents a gitlet commit object.<br>
+ * A Commit object stores message, timestamp, changes and parent commits of a commit.
+ * @author Fei Pan
  */
 public class Commit implements GitletObject {
 
@@ -15,15 +16,17 @@ public class Commit implements GitletObject {
     private String message;
     /** The timestamp of this Commit */
     private Date date;
-    /** The changes contained in this Commit.
-     *  <p>
-     *  {@code key}: File that was modified<br>
-     *  {@code value}: SHA-1 value of blob that stores the content of the file,<br>or null indicating the file is to be deleted
-     *  </p>
+    /**
+     * The changes contained in this Commit.
+     * <p>
+     * {@code key}: File that was modified<br>
+     * {@code value}: SHA-1 value of blob that stores the content of the file,<br>or null indicating the file is to be deleted
+     * </p>
      */
     private HashMap<File, String> changes;
-    /** The parents of this Commit,
-     *  which are represented by their SHA-1 values.
+    /**
+     * The parents of this Commit,
+     * which are represented by their SHA-1 values.
      */
     private String[] parents;
 
