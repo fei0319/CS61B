@@ -23,12 +23,29 @@ public interface GitletObject extends Serializable {
      * @return SHA1 value of the object
      */
     default String store(File gitletDir) {
-        String fullName = sha1();
+        File target = getPath(gitletDir, sha1());
+        Utils.writeObject(target, this);
+        return sha1();
+    }
+
+    /**
+     * Gets the path in which the object will be stored and creates necessary directory along the path.
+     * @param gitletDir the {@code .gitlet} directory
+     * @return the path in which the object stores
+     */
+    static public File getPath(File gitletDir, String fullName) {
         String prefix = fullName.substring(0, 2), suffix = fullName.substring(2);
         File targetDir = Utils.join(gitletDir, "objects", prefix);
-        File target = Utils.join(targetDir, suffix);
-        targetDir.mkdirs();
-        Utils.writeObject(target, this);
-        return fullName;
+        return Utils.join(targetDir, suffix);
+    }
+
+    /**
+     * Gets the object with SHA1 value s.
+     * @param gitletDir the {@code .gitlet} directory
+     * @param s SHA1 value
+     * @return a gitlet object
+     */
+    static public GitletObject read(File gitletDir, String s) {
+        return Utils.readObject(getPath(gitletDir, s), GitletObject.class);
     }
 }
