@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * Represents a gitlet repository.
@@ -170,5 +171,22 @@ public class Repository {
                     Utils.message(commit.sha1());
             }
         }
+    }
+
+    /**
+     * Displays what branches currently exist, and marks the current branch with a *.
+     * Also displays what files have been staged for addition or removal.
+     */
+    public static void status() {
+        Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
+        Commit current = (Commit) GitletObject.read(getRef("HEAD"));
+
+        Utils.message("=== Staged Files ===");
+        File[] stagedFiles = stagingArea.stagedFiles();
+        Arrays.sort(stagedFiles);
+        for (File file : stagedFiles) {
+            Utils.message(file.getName());
+        }
+        Utils.message("");
     }
 }

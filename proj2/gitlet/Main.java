@@ -41,6 +41,9 @@ public class Main {
             case "find":
                 Repository.find(args[1]);
                 break;
+            case "status":
+                Repository.status();
+                break;
             // TODO: FILL THE REST IN
             default:
                 Utils.exit("No command with that name exists.");

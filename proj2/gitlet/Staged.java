@@ -1,8 +1,10 @@
 package gitlet;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents the staging area and can be converted to a commit.<br>
@@ -99,11 +101,23 @@ public class Staged implements GitletObject {
     }
 
     /**
-     * Stage the specified file for removal.
+     * Stages the specified file for removal.
      *
      * @param f file to remove
      */
     public void stageForRemoval(File f) {
         changes.put(f, null);
+    }
+
+    /**
+     * Returns all files that have been staged.
+     *
+     * @return files that have been staged.
+     */
+    public File[] stagedFiles() {
+        ArrayList<File> result = new ArrayList<>();
+        for (Map.Entry<File, String> change : changes.entrySet())
+            result.add(change.getKey());
+        return result.toArray(new File[0]);
     }
 }

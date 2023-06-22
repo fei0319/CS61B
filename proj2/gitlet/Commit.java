@@ -69,6 +69,7 @@ public class Commit implements GitletObject {
         return Utils.sha1(message, date, tracked, parents);
     }
 
+    // TODO: Add documentation and replace println with Utils.message
     public void show() {
         System.out.println("===");
         System.out.printf("commit %s\n", sha1());
