@@ -29,11 +29,14 @@ public class Main {
             case "commit":
                 Repository.commit(args[1]);
                 break;
+            case "rm":
+                Repository.rm(args[1]);
+                break;
             case "log":
                 Repository.log();
                 break;
-            case "rm":
-                Repository.rm(args[1]);
+            case "global-log":
+                Repository.globalLog();
                 break;
             // TODO: FILL THE REST IN
             default:

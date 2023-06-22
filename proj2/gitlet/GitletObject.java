@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.Serializable;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * The GitletObject class is intended to mimic the four types of objects in real git.
@@ -38,6 +40,21 @@ public interface GitletObject extends Serializable {
      */
     static GitletObject read(String s) {
         return Utils.readObject(getPath(s), GitletObject.class);
+    }
+
+    /**
+     * Returns a list of SHA-1 value of all objects.
+     *
+     * @return a list of SHA-1 value of all objects
+     */
+    static String[] list() {
+        File objectDir = Utils.join(Repository.GITLET_DIR, "objects");
+        ArrayList<String> result = new ArrayList<>();
+        for (String prefix : objectDir.list()) {
+            for (String suffix : Utils.join(objectDir, prefix).list())
+                result.add(prefix + suffix);
+        }
+        return result.toArray(new String[0]);
     }
 
     /**

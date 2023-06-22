@@ -144,4 +144,16 @@ public class Repository {
             currentSHA1 = commit.getParents()[0];
         }
     }
+
+    /**
+     * Like log, except displays information about all commits ever made.
+     * The order of the commits is not defined.
+     */
+    public static void globalLog() {
+        for (String objectName : GitletObject.list()) {
+            GitletObject object = GitletObject.read(objectName);
+            if (object.getClass().equals(Commit.class))
+                ((Commit) object).show();
+        }
+    }
 }
