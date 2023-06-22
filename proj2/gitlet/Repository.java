@@ -70,7 +70,7 @@ public class Repository {
      * @param fileName file to add
      */
     public static void add(String fileName) {
-        Staged stagingArea = (Staged) GitletObject.read(getRef("STAGED"));
+        Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getRef("HEAD"));
         stagingArea.add(current, new File(fileName));
         stagingArea.store();
@@ -86,7 +86,7 @@ public class Repository {
      * @param message message for the commit
      */
     public static void commit(String message) {
-        Staged stagingArea = (Staged) GitletObject.read(getRef("STAGED"));
+        Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getRef("HEAD"));
 
         if (stagingArea.isEmpty()) {
@@ -112,7 +112,7 @@ public class Repository {
      * @param fileName file to remove
      */
     public static void rm(String fileName) {
-        Staged stagingArea = (Staged) GitletObject.read(getRef("STAGED"));
+        Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getRef("HEAD"));
         File file = new File(fileName);
         if (stagingArea.rm(file)) {

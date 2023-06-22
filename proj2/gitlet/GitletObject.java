@@ -3,7 +3,6 @@ package gitlet;
 import java.io.Serializable;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * The GitletObject class is intended to mimic the four types of objects in real git.
@@ -37,9 +36,37 @@ public interface GitletObject extends Serializable {
      *
      * @param s SHA-1 value
      * @return a gitlet object
+     * @see GitletObject#readAndDeleteUnused(String)
      */
     static GitletObject read(String s) {
         return Utils.readObject(getPath(s), GitletObject.class);
+    }
+
+    /**
+     * Similar to {@link GitletObject#read} except deletes all Staged
+     * objects except the one .gitlet/STAGED points to.
+     *
+     * @param s SHA-1 value
+     * @return a gitlet object
+     * @see GitletObject#read(String)
+     */
+    static GitletObject readAndDeleteUnused(String s) {
+        GitletObject object = Utils.readObject(getPath(s), GitletObject.class);
+        String staged = Repository.getRef("STAGED");
+        for (String objectName : list()) {
+            if (!objectName.equals(staged) && read(objectName).getClass().equals(Staged.class))
+                delete(objectName);
+        }
+        return object;
+    }
+
+    /**
+     * Deletes the specified object.
+     *
+     * @param s object to delete
+     */
+    static void delete(String s) {
+        getPath(s).delete();
     }
 
     /**
