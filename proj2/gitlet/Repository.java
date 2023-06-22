@@ -81,6 +81,13 @@ public class Repository {
         Staged stagingArea = (Staged) GitletObject.read(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getRef("HEAD"));
 
+        if (stagingArea.isEmpty()) {
+            Utils.exit("No changes added to the commit.");
+        }
+        if (message.isEmpty()) {
+            Utils.exit("Please enter a commit message.");
+        }
+
         Commit commit = current.nextCommit(message, stagingArea);
         commit.store();
         setRef("HEAD", commit.sha1());

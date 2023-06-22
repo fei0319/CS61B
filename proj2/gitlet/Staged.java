@@ -76,4 +76,13 @@ public class Staged implements GitletObject {
     public void clear() {
         changes.clear();
     }
+
+    /**
+     * Returns true if and only if no changes were staged.
+     *
+     * @return true if there is no changes
+     */
+    public boolean isEmpty() {
+        return changes.isEmpty();
+    }
 }
