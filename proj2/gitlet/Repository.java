@@ -45,8 +45,7 @@ public class Repository {
     }
 
     /**
-     * Initialize a gitlet repository. It is invoked by the following command:
-     * <pre>{@code gitlet init}</pre>
+     * Initialize a gitlet repository.
      */
     public static void init() {
         if (!GITLET_DIR.exists()) {
@@ -62,8 +61,7 @@ public class Repository {
     }
 
     /**
-     * Add a file to the staging area. It is invoked by the following command:
-     * <pre>{@code gitlet init}</pre>
+     * Add a file to the staging area.
      *
      * @param fileName file to add
      */
@@ -75,8 +73,7 @@ public class Repository {
     }
 
     /**
-     * Commit. It is invoked by the following command:
-     * <pre>{@code gitlet commit}</pre>
+     * Commit.
      *
      * @param message message for the commit
      */
@@ -92,8 +89,7 @@ public class Repository {
     }
 
     /**
-     * Show logs. It is invoked by the following command:
-     * <pre>{@code gitlet log}</pre>
+     * Show logs.
      */
     public static void log() {
         String currentSHA1 = getRef("HEAD");
