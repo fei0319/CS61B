@@ -2,10 +2,12 @@ package gitlet;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 import java.io.File;
 
 /**
  * Used to test functionality of Blob.
+ *
  * @author Fei Pan
  */
 public class BlobTest {

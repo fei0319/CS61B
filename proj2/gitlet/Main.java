@@ -2,6 +2,7 @@ package gitlet;
 
 /**
  * Driver class for Gitlet, a subset of the Git version-control system.
+ *
  * @author TODO
  */
 public class Main {
@@ -18,7 +19,7 @@ public class Main {
         if (!firstArg.equals("init") && !Repository.GITLET_DIR.exists()) {
             Utils.exit("Not in an initialized Gitlet directory.");
         }
-        switch(firstArg) {
+        switch (firstArg) {
             case "init":
                 Repository.init();
                 break;

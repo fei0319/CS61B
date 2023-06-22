@@ -9,13 +9,18 @@ import java.util.Map;
 /**
  * Represents a gitlet commit object.<br>
  * A Commit object stores message, timestamp, changes and parent commits of a commit.
+ *
  * @author Fei Pan
  */
 public class Commit implements GitletObject {
 
-    /** The message of this Commit. */
+    /**
+     * The message of this Commit.
+     */
     private String message;
-    /** The timestamp of this Commit */
+    /**
+     * The timestamp of this Commit
+     */
     private Date date;
     /**
      * The tracked files contained in this Commit.
@@ -44,10 +49,12 @@ public class Commit implements GitletObject {
     public Commit() {
         this("initial commit", new Date(0), new HashMap<>(), new String[0]);
     }
+
     /**
      * Creates a Commit.
+     *
      * @param message message
-     * @param date date
+     * @param date    date
      * @param tracked tracked files
      * @param parents SHA-1 values of the parents
      */
@@ -57,9 +64,11 @@ public class Commit implements GitletObject {
         this.tracked = tracked;
         this.parents = parents;
     }
+
     public String sha1() {
         return Utils.sha1((Object) Utils.serialize(this));
     }
+
     public void show() {
         System.out.println("===");
         System.out.printf("commit %s\n", sha1());
@@ -68,9 +77,11 @@ public class Commit implements GitletObject {
         System.out.println(message);
         System.out.println();
     }
+
     public String[] getParents() {
         return parents;
     }
+
     public boolean isInitial() {
         return parents.length == 0;
     }
@@ -78,7 +89,8 @@ public class Commit implements GitletObject {
     /**
      * Creates a commit from current commit with the specified staging area.
      * The staging area will be cleared afterward.
-     * @param message message for the new commit
+     *
+     * @param message     message for the new commit
      * @param stagingArea staging area to derived commit from
      * @return the derived commit
      */

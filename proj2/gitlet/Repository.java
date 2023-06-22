@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+
 import static gitlet.Utils.*;
 
 // TODO: any imports you need here
@@ -21,15 +22,20 @@ public class Repository {
      * variable is used. We've provided two examples for you.
      */
 
-    /** The current working directory. */
+    /**
+     * The current working directory.
+     */
     public static final File CWD = new File(System.getProperty("user.dir"));
-    /** The .gitlet directory. */
+    /**
+     * The .gitlet directory.
+     */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
     /* TODO: fill in the rest of this class. */
 
     /**
      * Get the SHA-1 value of the specified ref.
+     *
      * @return SHA-1 value of the specified refD
      */
     public static String getRef(String ref) {
@@ -39,6 +45,7 @@ public class Repository {
 
     /**
      * Set the SHA1 value of a specified ref.
+     *
      * @param ref the ref to be set
      * @param val the SHA-1 value to be applied
      */
@@ -60,10 +67,10 @@ public class Repository {
 
             setRef("HEAD", initialCommit.sha1());
             setRef("STAGED", stagingArea.sha1());
-        }
-        else
+        } else
             Utils.exit("A Gitlet version-control system already exists in the current directory.");
     }
+
     public static void add(String fileName) {
         Staged stagingArea = (Staged) GitletObject.read(GITLET_DIR, getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(GITLET_DIR, getRef("HEAD"));
