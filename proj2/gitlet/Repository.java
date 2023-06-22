@@ -150,8 +150,7 @@ public class Repository {
      * The order of the commits is not defined.
      */
     public static void globalLog() {
-        for (String objectName : GitletObject.list()) {
-            GitletObject object = GitletObject.read(objectName);
+        for (GitletObject object : GitletObject.listObjects()) {
             if (object.getClass().equals(Commit.class))
                 ((Commit) object).show();
         }

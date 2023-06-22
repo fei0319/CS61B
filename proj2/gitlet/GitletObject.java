@@ -85,6 +85,18 @@ public interface GitletObject extends Serializable {
     }
 
     /**
+     * Returns a list of all objects.
+     *
+     * @return a list of all objects.
+     */
+    static GitletObject[] listObjects() {
+        ArrayList<GitletObject> result = new ArrayList<>();
+        for (String objectName : list())
+            result.add(read(objectName));
+        return result.toArray(new GitletObject[0]);
+    }
+
+    /**
      * Gets the path in which the object will be stored and creates necessary directory along the path.
      *
      * @return the path in which the object stores
