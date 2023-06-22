@@ -66,7 +66,7 @@ public class Commit implements GitletObject {
     }
 
     public String sha1() {
-        return Utils.sha1((Object) Utils.serialize(this));
+        return Utils.sha1(message, date, tracked, parents);
     }
 
     public void show() {
@@ -80,6 +80,10 @@ public class Commit implements GitletObject {
 
     public String[] getParents() {
         return parents;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     public boolean isInitial() {

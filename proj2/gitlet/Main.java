@@ -38,6 +38,9 @@ public class Main {
             case "global-log":
                 Repository.globalLog();
                 break;
+            case "find":
+                Repository.find(args[1]);
+                break;
             // TODO: FILL THE REST IN
             default:
                 Utils.exit("No command with that name exists.");

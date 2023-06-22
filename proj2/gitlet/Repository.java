@@ -155,4 +155,20 @@ public class Repository {
                 ((Commit) object).show();
         }
     }
+
+    /**
+     * Prints out the ids of all commits that have the given commit message, one per line.
+     * If there are multiple such commits, it prints the ids out on separate lines.
+     *
+     * @param message message
+     */
+    public static void find(String message) {
+        for (GitletObject object : GitletObject.listObjects()) {
+            if (object.getClass().equals(Commit.class)) {
+                Commit commit = (Commit) object;
+                if (commit.getMessage().equals(message))
+                    Utils.message(commit.sha1());
+            }
+        }
+    }
 }
