@@ -2,8 +2,6 @@ package gitlet;
 
 import java.io.File;
 
-import static gitlet.Utils.*;
-
 /**
  * Represents a gitlet repository.
  *
@@ -17,7 +15,7 @@ public class Repository {
     /**
      * The .gitlet directory.
      */
-    public static final File GITLET_DIR = join(CWD, ".gitlet");
+    public static final File GITLET_DIR = Utils.join(CWD, ".gitlet");
 
     /* TODO: fill in the rest of this class. */
 
@@ -123,7 +121,7 @@ public class Repository {
         }
         if (current.hasFile(file)) {
             stagingArea.stageForRemoval(file);
-            file.delete();
+            Utils.restrictedDelete(file);
             stagingArea.store();
             return;
         }
