@@ -6,10 +6,8 @@ import static gitlet.Utils.*;
 
 /**
  * Represents a gitlet repository.
- * TODO: It's a good idea to give a description here of what else this Class
- * does at a high level.
  *
- * @author TODO
+ * @author Fei Pan
  */
 public class Repository {
     /**
@@ -45,7 +43,12 @@ public class Repository {
     }
 
     /**
-     * Initialize a gitlet repository.
+     * Creates a new Gitlet version-control system in the current directory.
+     * This system will automatically start with one commit:
+     * a commit that contains no files and has the commit message "initial commit"
+     * and timestamp of Unix epoch.
+     * It will have a single branch: master, which initially points to this initial commit,
+     * and master will be the current branch.
      */
     public static void init() {
         if (!GITLET_DIR.exists()) {
@@ -61,7 +64,10 @@ public class Repository {
     }
 
     /**
-     * Add a file to the staging area.
+     * Adds a copy of the file as it currently exists to the staging area.
+     * Staging an already-staged file overwrites the previous entry in the staging area.
+     * If the current working version of the file is identical to the version in the current commit,
+     * do not stage it to be added, and remove it from the staging area if it is already there.
      *
      * @param fileName file to add
      */
@@ -73,7 +79,11 @@ public class Repository {
     }
 
     /**
-     * Commit.
+     * Saves a snapshot of tracked files in the current commit and staging area.
+     * A commit will only update the contents of files it is tracking that
+     * have been staged for addition at the time of commit.
+     * Files tracked in the current commit may be untracked in the new commit as
+     * a result being staged for removal by the rm command.
      *
      * @param message message for the commit
      */
@@ -96,7 +106,10 @@ public class Repository {
     }
 
     /**
-     * Remove specified file.
+     * Unstage the file if it is currently staged for addition.
+     * If the file is tracked in the current commit, stage it for removal and
+     * remove the file from the working directory if the user has not already done so.
+     * Will not remove it unless it is tracked in the current commit.
      *
      * @param fileName file to remove
      */
@@ -108,7 +121,10 @@ public class Repository {
     }
 
     /**
-     * Show logs.
+     * Starting at the current head commit, display information about
+     * each commit backwards along the commit tree until the initial commit,
+     * following the first parent commit links, ignoring any second parents found in merge commits.
+     * In regular Git, this is what you get with git log --first-parent.
      */
     public static void log() {
         String currentSHA1 = getRef("HEAD");

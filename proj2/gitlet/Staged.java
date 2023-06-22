@@ -43,7 +43,7 @@ public class Staged implements GitletObject {
     /**
      * Add a file to the staging area.
      * If the modified file is identical to what it is in the current commit,
-     * remove it from the staging area.
+     * remove it from the staging area if it is there.
      *
      * @param current current commit
      * @param file    the file to be added
