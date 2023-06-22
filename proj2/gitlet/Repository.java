@@ -54,13 +54,21 @@ public class Repository {
     public static void init() {
         if (!GITLET_DIR.exists()) {
             Commit initialCommit = new Commit();
+            Staged stagingArea = new Staged();
             initialCommit.store(GITLET_DIR);
+            stagingArea.store(GITLET_DIR);
+
             setRef("HEAD", initialCommit.sha1());
+            setRef("STAGED", stagingArea.sha1());
         }
         else
             Utils.exit("A Gitlet version-control system already exists in the current directory.");
     }
     public static void add(String fileName) {
+        Staged stagingArea = (Staged) GitletObject.read(GITLET_DIR, getRef("STAGED"));
+        Commit current = (Commit) GitletObject.read(GITLET_DIR, getRef("HEAD"));
+        stagingArea.add(current, new File(fileName));
+        stagingArea.store(GITLET_DIR);
     }
 
     public static void log() {

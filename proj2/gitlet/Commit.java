@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.io.File;
+import java.util.Map;
 
 /**
  * Represents a gitlet commit object.<br>
@@ -17,13 +18,13 @@ public class Commit implements GitletObject {
     /** The timestamp of this Commit */
     private Date date;
     /**
-     * The changes contained in this Commit.
+     * The tracked files contained in this Commit.
      * <p>
      * {@code key}: File that was modified<br>
      * {@code value}: SHA-1 value of blob that stores the content of the file,<br>or null indicating the file is to be deleted
      * </p>
      */
-    private HashMap<File, String> changes;
+    private HashMap<File, String> tracked;
     /**
      * The parents of this Commit,
      * which are represented by their SHA-1 values.
@@ -47,13 +48,13 @@ public class Commit implements GitletObject {
      * Creates a Commit.
      * @param message message
      * @param date date
-     * @param changes changes
+     * @param tracked tracked files
      * @param parents SHA-1 values of the parents
      */
-    public Commit(String message, Date date, HashMap<File, String> changes, String[] parents) {
+    public Commit(String message, Date date, HashMap<File, String> tracked, String[] parents) {
         this.message = message;
         this.date = date;
-        this.changes = changes;
+        this.tracked = tracked;
         this.parents = parents;
     }
     public String sha1() {
@@ -72,5 +73,19 @@ public class Commit implements GitletObject {
     }
     public boolean isInitial() {
         return parents.length == 0;
+    }
+
+    /**
+     * Creates a commit from current commit with the specified staging area.
+     * The staging area will be cleared afterward.
+     * @param message message for the new commit
+     * @param stagingArea staging area to derived commit from
+     * @return the derived commit
+     */
+    public Commit nextCommit(String message, Staged stagingArea) {
+        Commit commit = new Commit(message, new Date(), tracked, new String[]{this.sha1()});
+        commit.tracked.putAll(stagingArea.getChanges());
+        stagingArea.clear();
+        return commit;
     }
 }
