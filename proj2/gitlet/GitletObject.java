@@ -19,14 +19,13 @@ public interface GitletObject extends Serializable {
 
     /**
      * Store the object to a path determined by its SHA-1 value,
-     * namely {@code <gitletDir>/objects/<SHA-1[:2]>/<SHA-1[2:]>}.<br>
+     * namely {@code <Repository.GITLET_DIR>/objects/<SHA-1[:2]>/<SHA-1[2:]>}.<br>
      * Will return SHA-1 value of the object.
      *
-     * @param gitletDir the {@code .gitlet} directory
      * @return SHA-1 value of the object
      */
-    default String store(File gitletDir) {
-        File target = getPath(gitletDir, sha1());
+    default String store() {
+        File target = getPath(sha1());
         Utils.writeObject(target, this);
         return sha1();
     }
@@ -34,12 +33,11 @@ public interface GitletObject extends Serializable {
     /**
      * Gets the path in which the object will be stored and creates necessary directory along the path.
      *
-     * @param gitletDir the {@code .gitlet} directory
      * @return the path in which the object stores
      */
-    static public File getPath(File gitletDir, String fullName) {
+    static public File getPath(String fullName) {
         String prefix = fullName.substring(0, 2), suffix = fullName.substring(2);
-        File targetDir = Utils.join(gitletDir, "objects", prefix);
+        File targetDir = Utils.join(Repository.GITLET_DIR, "objects", prefix);
         targetDir.mkdirs();
         return Utils.join(targetDir, suffix);
     }
@@ -47,11 +45,10 @@ public interface GitletObject extends Serializable {
     /**
      * Gets the object with SHA-1 value s.
      *
-     * @param gitletDir the {@code .gitlet} directory
-     * @param s         SHA-1 value
+     * @param s SHA-1 value
      * @return a gitlet object
      */
-    static public GitletObject read(File gitletDir, String s) {
-        return Utils.readObject(getPath(gitletDir, s), GitletObject.class);
+    static public GitletObject read(String s) {
+        return Utils.readObject(getPath(s), GitletObject.class);
     }
 }

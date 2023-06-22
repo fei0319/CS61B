@@ -26,7 +26,7 @@ public class Commit implements GitletObject {
      * The tracked files contained in this Commit.
      * <p>
      * {@code key}: File that was modified<br>
-     * {@code value}: SHA-1 value of blob that stores the content of the file,<br>or null indicating the file is to be deleted
+     * {@code value}: SHA-1 value of blob that stores the content of the file.
      * </p>
      */
     private HashMap<File, String> tracked;
@@ -99,5 +99,16 @@ public class Commit implements GitletObject {
         commit.tracked.putAll(stagingArea.getChanges());
         stagingArea.clear();
         return commit;
+    }
+
+    /**
+     * Returns SHA-1 value of the specified file in this commit.
+     * If the file is not tracked, returns null instead.
+     *
+     * @param f file
+     * @return SHA-1 value, or null
+     */
+    public String getFile(File f) {
+        return tracked.get(f);
     }
 }

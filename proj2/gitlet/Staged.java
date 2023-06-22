@@ -12,11 +12,25 @@ import java.util.HashMap;
  */
 public class Staged implements GitletObject {
     /**
-     * Used to store staged changes. See Commit.changes for details.
+     * Used to store staged changes.
+     * A null key means the specified file is to be removed.
+     * See Commit.changes for details.
      *
      * @see Commit#tracked
      */
     private HashMap<File, String> changes;
+
+    /**
+     * Set the STAGED ref to self as well as store.
+     *
+     * @return SHA-1 value of the object
+     * @see GitletObject#store
+     */
+    @Override
+    public String store() {
+        Repository.setRef("STAGED", sha1());
+        return GitletObject.super.store();
+    }
 
     public HashMap<File, String> getChanges() {
         return changes;
@@ -35,6 +49,15 @@ public class Staged implements GitletObject {
      * @param file    the file to be added
      */
     public void add(Commit current, File file) {
+        if (!file.exists())
+            Utils.exit("File does not exist.");
+        Blob b = new Blob(file);
+        if (b.sha1().equals(current.getFile(file))) {
+            changes.remove(file);
+        } else {
+            changes.put(file, b.sha1());
+            b.store();
+        }
     }
 
     public void rm(File file) {
