@@ -66,7 +66,7 @@ public class Commit implements GitletObject {
     }
 
     public String sha1() {
-        return Utils.sha1(message, date, tracked, parents);
+        return Utils.sha1(Utils.serialize(this));
     }
 
     // TODO: Add documentation and replace println with Utils.message

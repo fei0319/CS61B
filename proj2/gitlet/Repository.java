@@ -1,7 +1,10 @@
 package gitlet;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents a gitlet repository.
@@ -48,6 +51,8 @@ public class Repository {
      * and timestamp of Unix epoch.
      * It will have a single branch: master, which initially points to this initial commit,
      * and master will be the current branch.
+     * <p>
+     * TODO: Add branch feature
      */
     public static void init() {
         if (!GITLET_DIR.exists()) {
@@ -176,17 +181,32 @@ public class Repository {
     /**
      * Displays what branches currently exist, and marks the current branch with a *.
      * Also displays what files have been staged for addition or removal.
+     * <p>
+     * TODO: Add branch feature
      */
     public static void status() {
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getRef("HEAD"));
 
-        Utils.message("=== Staged Files ===");
-        File[] stagedFiles = stagingArea.stagedFiles();
-        Arrays.sort(stagedFiles);
-        for (File file : stagedFiles) {
-            Utils.message(file.getName());
+        ArrayList<File> staged = new ArrayList<>(), removed = new ArrayList<>();
+        for (Map.Entry<File, String> change : stagingArea.getChanges().entrySet()) {
+            if (change.getValue() == null) {
+                removed.add(change.getKey());
+            } else {
+                staged.add(change.getKey());
+            }
         }
+        staged.sort(null);
+        removed.sort(null);
+
+        Utils.message("=== Staged Files ===");
+        for (File f : staged)
+            Utils.message(f.toString());
+        Utils.message("");
+
+        Utils.message("=== Removed Files ===");
+        for (File f : removed)
+            Utils.message(f.toString());
         Utils.message("");
     }
 }
