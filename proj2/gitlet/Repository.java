@@ -92,7 +92,19 @@ public class Repository {
         commit.store();
         setRef("HEAD", commit.sha1());
         stagingArea.store();
-        // Not need to reset STAGED as Stage.store has done so
+        // No need to reset STAGED as Stage.store has done so
+    }
+
+    /**
+     * Remove specified file.
+     *
+     * @param fileName file to remove
+     */
+    public static void rm(String fileName) {
+        Staged stagingArea = (Staged) GitletObject.read(getRef("STAGED"));
+        if (stagingArea.rm(new File(fileName)))
+            return;
+        // TODO: Rest part of rm
     }
 
     /**

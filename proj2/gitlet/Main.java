@@ -32,6 +32,9 @@ public class Main {
             case "log":
                 Repository.log();
                 break;
+            case "rm":
+                Repository.rm(args[1]);
+                break;
             // TODO: FILL THE REST IN
             default:
                 Utils.exit("No command with that name exists.");

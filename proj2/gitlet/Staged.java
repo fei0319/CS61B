@@ -60,7 +60,19 @@ public class Staged implements GitletObject {
         }
     }
 
-    public void rm(File file) {
+    /**
+     * Remove a file from the staging area and return true.
+     * If the file is not staged, nothing will happen and return false.
+     *
+     * @param file file to remove
+     * @return true if the file is removed from the staging area
+     */
+    public boolean rm(File file) {
+        if (changes.containsKey(file) && changes.get(file) != null) {
+            changes.remove(file);
+            return true;
+        }
+        return false;
     }
 
     /**
