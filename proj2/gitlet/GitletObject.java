@@ -35,7 +35,7 @@ public interface GitletObject extends Serializable {
      *
      * @return the path in which the object stores
      */
-    static public File getPath(String fullName) {
+    static File getPath(String fullName) {
         String prefix = fullName.substring(0, 2), suffix = fullName.substring(2);
         File targetDir = Utils.join(Repository.GITLET_DIR, "objects", prefix);
         targetDir.mkdirs();
@@ -48,7 +48,7 @@ public interface GitletObject extends Serializable {
      * @param s SHA-1 value
      * @return a gitlet object
      */
-    static public GitletObject read(String s) {
+    static GitletObject read(String s) {
         return Utils.readObject(getPath(s), GitletObject.class);
     }
 }
