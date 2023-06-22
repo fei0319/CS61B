@@ -96,7 +96,12 @@ public class Commit implements GitletObject {
      */
     public Commit nextCommit(String message, Staged stagingArea) {
         Commit commit = new Commit(message, new Date(), tracked, new String[]{this.sha1()});
-        commit.tracked.putAll(stagingArea.getChanges());
+        for (Map.Entry<File, String> change : stagingArea.getChanges().entrySet()) {
+            if (change.getValue() == null)
+                commit.tracked.remove(change.getKey());
+            else
+                commit.tracked.put(change.getKey(), change.getValue());
+        }
         stagingArea.clear();
         return commit;
     }
@@ -110,5 +115,15 @@ public class Commit implements GitletObject {
      */
     public String getFile(File f) {
         return tracked.get(f);
+    }
+
+    /**
+     * Returns true if only if the specified file is tracked by this commit.
+     *
+     * @param f file to check
+     * @return true if the file is tracked
+     */
+    public Boolean hasFile(File f) {
+        return tracked.containsKey(f);
     }
 }

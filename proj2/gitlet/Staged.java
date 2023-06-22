@@ -97,4 +97,13 @@ public class Staged implements GitletObject {
     public boolean isEmpty() {
         return changes.isEmpty();
     }
+
+    /**
+     * Stage the specified file for removal.
+     *
+     * @param f file to remove
+     */
+    public void stageForRemoval(File f) {
+        changes.put(f, null);
+    }
 }

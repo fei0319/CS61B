@@ -115,9 +115,19 @@ public class Repository {
      */
     public static void rm(String fileName) {
         Staged stagingArea = (Staged) GitletObject.read(getRef("STAGED"));
-        if (stagingArea.rm(new File(fileName)))
+        Commit current = (Commit) GitletObject.read(getRef("HEAD"));
+        File file = new File(fileName);
+        if (stagingArea.rm(file)) {
+            stagingArea.store();
             return;
-        // TODO: Rest part of rm
+        }
+        if (current.hasFile(file)) {
+            stagingArea.stageForRemoval(file);
+            file.delete();
+            stagingArea.store();
+            return;
+        }
+        Utils.exit("No reason to remove the file.");
     }
 
     /**
