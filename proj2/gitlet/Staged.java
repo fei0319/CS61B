@@ -110,6 +110,26 @@ public class Staged implements GitletObject {
     }
 
     /**
+     * Returns true if and only if some version of the specified file is staged.
+     *
+     * @param f file to check
+     * @return true if some version of the file is staged
+     */
+    public boolean hasFile(File f) {
+        return changes.containsKey(f);
+    }
+
+    /**
+     * Returns true if and only if the specified file is staged for removal.
+     *
+     * @param f file to check
+     * @return true if the file is staged for removal
+     */
+    public boolean containsRemoval(File f) {
+        return changes.containsKey(f) && changes.get(f) == null;
+    }
+
+    /**
      * Returns all files that have been staged.
      *
      * @return files that have been staged.

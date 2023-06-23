@@ -87,6 +87,10 @@ public class Commit implements GitletObject {
         return message;
     }
 
+    public HashMap<File, String> getTracked() {
+        return tracked;
+    }
+
     public boolean isInitial() {
         return parents.length == 0;
     }

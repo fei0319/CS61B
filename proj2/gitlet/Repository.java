@@ -1,10 +1,7 @@
 package gitlet;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a gitlet repository.
@@ -201,12 +198,44 @@ public class Repository {
 
         Utils.message("=== Staged Files ===");
         for (File f : staged)
-            Utils.message(f.toString());
+            Utils.message(f.getName());
         Utils.message("");
 
         Utils.message("=== Removed Files ===");
         for (File f : removed)
-            Utils.message(f.toString());
+            Utils.message(f.getName());
+        Utils.message("");
+
+        ArrayList<File> unstaged = new ArrayList<>(), untracked = new ArrayList<>();
+        for (String fileName : Utils.plainFilenamesIn(CWD)) {
+            File file = new File(fileName);
+            String currentVersion = current.getFile(file);
+            if (stagingArea.hasFile(file)) {
+                currentVersion = stagingArea.getChanges().get(file);
+            }
+            if (currentVersion == null && !stagingArea.containsRemoval(file))
+                untracked.add(file);
+            else if (!new Blob(file).sha1().equals(currentVersion))
+                unstaged.add(file);
+        }
+
+        Set<File> allTrackedFiles = new HashSet<>(current.getTracked().keySet());
+        allTrackedFiles.addAll(stagingArea.getChanges().keySet());
+        for (File file : allTrackedFiles) {
+            if (!file.exists() && !stagingArea.containsRemoval(file))
+                unstaged.add(file);
+        }
+        unstaged.sort(null);
+        untracked.sort(null);
+
+        Utils.message("=== Modifications Not Staged For Commit ===");
+        for (File f : unstaged)
+            Utils.message(f.getName() + (f.exists() ? " (modified)" : " (deleted)"));
+        Utils.message("");
+
+        Utils.message("=== Untracked Files ===");
+        for (File f : untracked)
+            Utils.message(f.getName());
         Utils.message("");
     }
 }
