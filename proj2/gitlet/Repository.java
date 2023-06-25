@@ -5,6 +5,20 @@ import java.util.*;
 
 /**
  * Represents a gitlet repository.
+ * <p>
+ * In gitlet, there are three kinds of {@link GitletObject}, respectively
+ * {@link Commit}, {@link Blob} and {@link Staged}. Commit is used to store
+ * commits, Blob is used to store files and Staged represents staging area.
+ * All these objects are stored in {@link Repository#GITLET_DIR}/objects,
+ * with their SHA-1 value being their names.
+ * <p>
+ * Two single file {@code HEAD} and {@code STAGED} are stored in
+ * {@link Repository#GITLET_DIR}. {@code HEAD} stores name of the current
+ * branch and {@code STAGED} stores SHA-1 value of the staging area object.
+ * <p>
+ * Branches are stored in {@link Repository#GITLET_REF_DIR}, one each file.
+ * Each file contains SHA-1 value of the topmost commit of the branch and
+ * was named by the branch.
  *
  * @author Fei Pan
  */
@@ -17,13 +31,42 @@ public class Repository {
      * The .gitlet directory.
      */
     public static final File GITLET_DIR = Utils.join(CWD, ".gitlet");
+    /**
+     * The branches directory.
+     */
+    public static final File GITLET_REF_DIR = Utils.join(GITLET_DIR, "refs");
 
     /* TODO: fill in the rest of this class. */
 
     /**
-     * Get the SHA-1 value of the specified ref.
+     * Get SHA-1 value of the commit the specified branch points to.
      *
-     * @return SHA-1 value of the specified ref
+     * @param branchName name of the branch
+     * @return SHA-1 value of corresponding commit
+     */
+    public static String getBranch(String branchName) {
+        // TODO: fill in the method
+    }
+
+    /**
+     * Make the specified branch point to the specified commit.
+     * If such branch does not exist, create it.
+     *
+     * @param branchName branch to set
+     * @param commitName commit to point to
+     */
+    public static void setBranch(String branchName, String commitName) {
+        // TODO: fill in the method
+    }
+
+    /**
+     * Get the SHA-1 value of the specified ref.
+     * If the specified ref is HEAD, will return
+     * the branch relating to it instead.
+     *
+     * @param ref reference to get
+     * @return SHA-1 value of the specified ref,
+     * or current branch for HEAD ref
      */
     public static String getRef(String ref) {
         File f = Utils.join(GITLET_DIR, ref);
@@ -32,9 +75,14 @@ public class Repository {
 
     /**
      * Set the SHA1 value of a specified ref.
+     * If the specified ref is HEAD, will set
+     * the branch it points to rather than SHA-1
+     * value.
      *
      * @param ref the ref to be set
-     * @param val the SHA-1 value to be applied
+     * @param val the SHA-1 value to be applied,
+     *            or the branch to be applied for
+     *            HEAD
      */
     public static void setRef(String ref, String val) {
         File f = Utils.join(GITLET_DIR, ref);
@@ -48,10 +96,9 @@ public class Repository {
      * and timestamp of Unix epoch.
      * It will have a single branch: master, which initially points to this initial commit,
      * and master will be the current branch.
-     * <p>
-     * TODO: Add branch feature
      */
     public static void init() {
+        // TODO: Add branch feature
         if (!GITLET_DIR.exists()) {
             Commit initialCommit = new Commit();
             Staged stagingArea = new Staged();
@@ -89,6 +136,7 @@ public class Repository {
      * @param message message for the commit
      */
     public static void commit(String message) {
+        // TODO: Add branch feature
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getRef("HEAD"));
 
