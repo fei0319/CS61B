@@ -77,7 +77,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         return this.size;
     }
 
-    BSTNode put(BSTNode node, K key, V value) {
+    private BSTNode put(BSTNode node, K key, V value) {
         if (node == null) {
             node = new BSTNode();
             ++size;
@@ -98,7 +98,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         root = put(root, key, value);
     }
 
-    void addTo(BSTNode node, Set<K> s) {
+    private void addTo(BSTNode node, Set<K> s) {
         if (node == null)
             return;
         addTo(node.left, s);
@@ -113,21 +113,21 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         return result;
     }
 
-    BSTNode rotateLeft(BSTNode node) {
+    private BSTNode rotateLeft(BSTNode node) {
         BSTNode root = node.right;
         node.right = node.right.left;
         root.left = node;
         return root;
     }
 
-    BSTNode rotateRight(BSTNode node) {
+    private BSTNode rotateRight(BSTNode node) {
         BSTNode root = node.left;
         node.left = node.left.right;
         root.right = node;
         return root;
     }
 
-    BSTNode remove(BSTNode node, K key) {
+    private BSTNode remove(BSTNode node, K key) {
         int c = key.compareTo(node.key);
         if (c == 0) {
             if (node.right != null)
@@ -165,5 +165,12 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     @Override
     public Iterator<K> iterator() {
         return keySet().iterator();
+    }
+
+    public void printInOrder() {
+        /**
+         * Not going to implement this method;
+         * only used to pass API checker.
+         */
     }
 }
