@@ -134,6 +134,19 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return size;
     }
 
+    private void resize(int tableSize) {
+        ArrayList<Node> content = new ArrayList<>();
+        for (Collection<Node> bucket : buckets) {
+            if (bucket != null)
+                for (Node node : bucket)
+                    content.add(node);
+        }
+        buckets = createTable(tableSize);
+        size = 0;
+        for (Node node : content)
+            put(node.key, node.value);
+    }
+
     @Override
     public void put(K key, V value) {
         Collection<Node> bucket = buckets[Math.floorMod(key.hashCode(), buckets.length)];
@@ -149,6 +162,9 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
             }
         bucket.add(new Node(key, value));
         ++size;
+
+        if ((double) size / buckets.length > maxLoad)
+            resize(buckets.length * 2);
     }
 
     @Override
