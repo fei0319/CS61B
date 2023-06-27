@@ -52,6 +52,9 @@ public class Main {
                 else
                     Repository.checkoutFile(args[1], args[3]);
                 break;
+            case "branch":
+                Repository.branch(args[1]);
+                break;
             // TODO: FILL THE REST IN
             default:
                 Utils.exit("No command with that name exists.");

@@ -362,4 +362,17 @@ public class Repository {
             Utils.exit("File does not exist in that commit.");
         ((Blob) GitletObject.read(commit.getFile(f))).saveAs(f);
     }
+
+    /**
+     * Creates a new branch with the given name, and points it at
+     * the current head commit. A branch is nothing more than a name
+     * for a reference (a SHA-1 identifier) to a commit node.
+     *
+     * @param branchName branch to create
+     */
+    public static void branch(String branchName) {
+        if (getBranch(branchName) == null)
+            Utils.exit("A branch with that name already exists.");
+        setBranch(branchName, getBranch(getRef("HEAD")));
+    }
 }
