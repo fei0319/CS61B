@@ -39,13 +39,23 @@ public class Repository {
     /* TODO: fill in the rest of this class. */
 
     /**
+     * Get a list of branch names.
+     *
+     * @return a list of branch names
+     */
+    public static List<String> getBranches() {
+        return Utils.plainFilenamesIn(GITLET_REF_DIR);
+    }
+
+    /**
      * Get SHA-1 value of the commit the specified branch points to.
      *
      * @param branchName name of the branch
      * @return SHA-1 value of corresponding commit
      */
     public static String getBranch(String branchName) {
-        // TODO: fill in the method
+        File f = Utils.join(GITLET_REF_DIR, branchName);
+        return Utils.readContentsAsString(f);
     }
 
     /**
@@ -56,7 +66,8 @@ public class Repository {
      * @param commitName commit to point to
      */
     public static void setBranch(String branchName, String commitName) {
-        // TODO: fill in the method
+        File f = Utils.join(GITLET_REF_DIR, branchName);
+        Utils.writeContents(f, commitName);
     }
 
     /**
@@ -98,14 +109,16 @@ public class Repository {
      * and master will be the current branch.
      */
     public static void init() {
-        // TODO: Add branch feature
         if (!GITLET_DIR.exists()) {
+            GITLET_REF_DIR.mkdirs();
+
             Commit initialCommit = new Commit();
             Staged stagingArea = new Staged();
             initialCommit.store();
             stagingArea.store();
 
-            setRef("HEAD", initialCommit.sha1());
+            setBranch("master", initialCommit.sha1());
+            setRef("HEAD", "master");
             setRef("STAGED", stagingArea.sha1());
         } else
             Utils.exit("A Gitlet version-control system already exists in the current directory.");
@@ -121,7 +134,7 @@ public class Repository {
      */
     public static void add(String fileName) {
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
-        Commit current = (Commit) GitletObject.read(getRef("HEAD"));
+        Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));
         stagingArea.add(current, new File(fileName));
         stagingArea.store();
     }
@@ -138,7 +151,7 @@ public class Repository {
     public static void commit(String message) {
         // TODO: Add branch feature
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
-        Commit current = (Commit) GitletObject.read(getRef("HEAD"));
+        Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));
 
         if (stagingArea.isEmpty()) {
             Utils.exit("No changes added to the commit.");
@@ -149,7 +162,7 @@ public class Repository {
 
         Commit commit = current.nextCommit(message, stagingArea);
         commit.store();
-        setRef("HEAD", commit.sha1());
+        setBranch(getRef("HEAD"), commit.sha1());
         stagingArea.store();
         // No need to reset STAGED as Stage.store has done so
     }
@@ -164,7 +177,7 @@ public class Repository {
      */
     public static void rm(String fileName) {
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
-        Commit current = (Commit) GitletObject.read(getRef("HEAD"));
+        Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));
         File file = new File(fileName);
         if (stagingArea.rm(file)) {
             stagingArea.store();
@@ -186,7 +199,7 @@ public class Repository {
      * In regular Git, this is what you get with git log --first-parent.
      */
     public static void log() {
-        String currentSHA1 = getRef("HEAD");
+        String currentSHA1 = getBranch(getRef("HEAD"));
         while (true) {
             Commit commit = (Commit) GitletObject.read(currentSHA1);
             commit.show();
@@ -231,7 +244,7 @@ public class Repository {
      */
     public static void status() {
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
-        Commit current = (Commit) GitletObject.read(getRef("HEAD"));
+        Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));
 
         ArrayList<File> staged = new ArrayList<>(), removed = new ArrayList<>();
         for (Map.Entry<File, String> change : stagingArea.getChanges().entrySet()) {
