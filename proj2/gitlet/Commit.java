@@ -69,14 +69,13 @@ public class Commit implements GitletObject {
         return Utils.sha1(Utils.serialize(this));
     }
 
-    // TODO: Add documentation and replace println with Utils.message
     public void show() {
-        System.out.println("===");
-        System.out.printf("commit %s\n", sha1());
+        Utils.message("===");
+        Utils.message("commit %s", sha1());
         SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
-        System.out.printf("Date: %s\n", formatter.format(date));
-        System.out.println(message);
-        System.out.println();
+        Utils.message("Date: %s", formatter.format(date));
+        Utils.message(message);
+        Utils.message("");
     }
 
     public String[] getParents() {

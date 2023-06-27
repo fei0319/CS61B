@@ -149,7 +149,6 @@ public class Repository {
      * @param message message for the commit
      */
     public static void commit(String message) {
-        // TODO: Add branch feature
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));
 
@@ -239,13 +238,12 @@ public class Repository {
     /**
      * Displays what branches currently exist, and marks the current branch with a *.
      * Also displays what files have been staged for addition or removal.
-     * <p>
-     * TODO: Add branch feature
      */
     public static void status() {
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));
 
+        List<String> branches = getBranches();
         ArrayList<File> staged = new ArrayList<>(), removed = new ArrayList<>();
         for (Map.Entry<File, String> change : stagingArea.getChanges().entrySet()) {
             if (change.getValue() == null) {
@@ -254,8 +252,13 @@ public class Repository {
                 staged.add(change.getKey());
             }
         }
+        branches.sort(null);
         staged.sort(null);
         removed.sort(null);
+
+        Utils.message("=== Branches ===");
+        for (String branch : branches)
+            Utils.message((branch.equals(getRef("HEAD")) ? "*" : "") + branch);
 
         Utils.message("=== Staged Files ===");
         for (File f : staged)
