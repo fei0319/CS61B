@@ -32,14 +32,20 @@ public interface GitletObject extends Serializable {
     }
 
     /**
-     * Gets the object with SHA-1 value s.
+     * Gets the object with SHA-1 value s. If the specified file
+     * does not exist, return null.
      *
      * @param s SHA-1 value
-     * @return a gitlet object
+     * @return a gitlet object or null if it does not exist
      * @see GitletObject#readAndDeleteUnused(String)
      */
     static GitletObject read(String s) {
-        return Utils.readObject(getPath(s), GitletObject.class);
+        if (s == null)
+            return null;
+        File f = getPath(s);
+        if (!f.exists())
+            return null;
+        return Utils.readObject(f, GitletObject.class);
     }
 
     /**
@@ -106,5 +112,22 @@ public interface GitletObject extends Serializable {
         File targetDir = Utils.join(Repository.GITLET_DIR, "objects", prefix);
         targetDir.mkdirs();
         return Utils.join(targetDir, suffix);
+    }
+
+    /**
+     * Gets corresponding object name to the specified abbreviation.
+     * Return null if no matched object is found.
+     *
+     * @param objectName abbreviation of object name
+     * @return full object name, or null if no object matches the abbreviation
+     */
+    static String autocomplete(String objectName) {
+        if (objectName.length() == 40)
+            return objectName;
+        for (GitletObject object : listObjects()) {
+            if (object.sha1().startsWith(objectName))
+                return object.sha1();
+        }
+        return null;
     }
 }

@@ -49,12 +49,16 @@ public class Repository {
 
     /**
      * Get SHA-1 value of the commit the specified branch points to.
+     * If the branch does not exist, return null.
      *
      * @param branchName name of the branch
      * @return SHA-1 value of corresponding commit
+     * or null if the branch does not exist;
      */
     public static String getBranch(String branchName) {
         File f = Utils.join(GITLET_REF_DIR, branchName);
+        if (!f.exists())
+            return null;
         return Utils.readContentsAsString(f);
     }
 
@@ -301,5 +305,52 @@ public class Repository {
         for (File f : untracked)
             Utils.message(f.getName());
         Utils.message("");
+    }
+
+    /**
+     * CLEAR ALL PLAIN FILES IN CWD
+     */
+    private static void clearCWD() {
+        List<String> fileNames = Utils.plainFilenamesIn(CWD);
+        if (fileNames == null)
+            return;
+        for (String fileName : fileNames)
+            new File(fileName).delete();
+    }
+
+    /**
+     * Will CLEAR CWD in advance
+     * Takes all files in the commit at the head of the given branch, and puts
+     * them in the working directory, overwriting the versions of the files that
+     * are already there if they exist.
+     *
+     * @param branchName branch to checkout
+     */
+    public static void checkoutBranch(String branchName) {
+        if (getBranch(branchName) == null)
+            Utils.exit("No such branch exists.");
+        Commit commit = (Commit) GitletObject.read(getBranch(branchName));
+        clearCWD();
+
+        assert commit != null;
+        for (Map.Entry<File, String> track : commit.getTracked().entrySet())
+            ((Blob) GitletObject.read(track.getValue())).saveAs(track.getKey());
+        setRef("HEAD", branchName);
+        Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
+        stagingArea.clear();
+        stagingArea.store();
+    }
+
+    public static void checkoutFile(String commitName, String fileName) {
+        commitName = GitletObject.autocomplete(commitName);
+        GitletObject object = GitletObject.read(commitName);
+        if (object == null)
+            Utils.exit("No commit with that id exists.");
+
+        Commit commit = (Commit) object;
+        File f = new File(fileName);
+        if (!commit.hasFile(f))
+            Utils.exit("File does not exist in that commit.");
+        ((Blob) GitletObject.read(commit.getFile(f))).saveAs(f);
     }
 }

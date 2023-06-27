@@ -44,7 +44,14 @@ public class Main {
             case "status":
                 Repository.status();
                 break;
-            // TODO: FILL THE REST IN
+            case "checkout":
+                if (args.length == 2)
+                    Repository.checkoutBranch(args[1]);
+                else if (args.length == 3)
+                    Repository.checkoutFile(Repository.getBranch(Repository.getRef("HEAD")), args[2]);
+                else
+                    Repository.checkoutFile(args[1], args[3]);
+                // TODO: FILL THE REST IN
             default:
                 Utils.exit("No command with that name exists.");
         }
