@@ -11,6 +11,11 @@ import java.io.File;
  * @author Fei Pan
  */
 public class BlobTest {
+    /**
+     * Test whether a blob read from a file and another blob
+     * read from another file created by the former blob have
+     * the same SHA-1 value.
+     */
     @Test
     public void testReadWrite() {
         final String FILE_NAME = ".blobtest";

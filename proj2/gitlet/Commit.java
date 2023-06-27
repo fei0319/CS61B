@@ -66,9 +66,12 @@ public class Commit implements GitletObject {
     }
 
     public String sha1() {
-        return Utils.sha1(Utils.serialize(this));
+        return Utils.sha1((Object) Utils.serialize(this));
     }
 
+    /**
+     * Show information of this commit in a certain format.
+     */
     public void show() {
         Utils.message("===");
         Utils.message("commit %s", sha1());
@@ -90,6 +93,14 @@ public class Commit implements GitletObject {
         return tracked;
     }
 
+    /**
+     * Returns whether this commit is the initial commit.
+     * The judgement is done based on the number of parents
+     * of the commit. A commit is considered initial iff the
+     * number of its parents is 0.
+     *
+     * @return whether this commit is the initial commit
+     */
     public boolean isInitial() {
         return parents.length == 0;
     }
