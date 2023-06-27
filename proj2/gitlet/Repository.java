@@ -324,7 +324,7 @@ public class Repository {
      * them in the working directory, overwriting the versions of the files that
      * are already there if they exist.
      *
-     * @param branchName branch to checkout
+     * @param branchName branch to check out
      */
     public static void checkoutBranch(String branchName) {
         if (getBranch(branchName) == null)
@@ -341,6 +341,15 @@ public class Repository {
         stagingArea.store();
     }
 
+    /**
+     * Takes the version of the file as it exists in the commit with
+     * the given id, and puts it in the working directory, overwriting
+     * the version of the file that’s already there if there is one.
+     * The new version of the file is not staged.
+     *
+     * @param commitName version of the checked out file
+     * @param fileName   file to check out
+     */
     public static void checkoutFile(String commitName, String fileName) {
         commitName = GitletObject.autocomplete(commitName);
         GitletObject object = GitletObject.read(commitName);

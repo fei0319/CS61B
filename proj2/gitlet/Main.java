@@ -51,7 +51,8 @@ public class Main {
                     Repository.checkoutFile(Repository.getBranch(Repository.getRef("HEAD")), args[2]);
                 else
                     Repository.checkoutFile(args[1], args[3]);
-                // TODO: FILL THE REST IN
+                break;
+            // TODO: FILL THE REST IN
             default:
                 Utils.exit("No command with that name exists.");
         }
