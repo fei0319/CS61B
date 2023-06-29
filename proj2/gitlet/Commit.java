@@ -34,8 +34,6 @@ public class Commit implements GitletObject {
      */
     private String[] parents;
 
-    /* TODO: fill in the rest of this class. */
-
     /**
      * Creates an initial commit.
      * In gitlet, an initial commit is such a commit:

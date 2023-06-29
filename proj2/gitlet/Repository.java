@@ -36,8 +36,6 @@ public class Repository {
      */
     public static final File GITLET_REF_DIR = Utils.join(GITLET_DIR, "refs");
 
-    /* TODO: fill in the rest of this class. */
-
     /**
      * Get a list of branch names.
      *
