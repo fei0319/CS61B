@@ -70,6 +70,15 @@ public class Commit implements GitletObject {
         return sha1().hashCode();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null)
+            return false;
+        if (o.getClass() != Commit.class)
+            return false;
+        return message.equals(((Commit) o).message) && hashCode() == o.hashCode();
+    }
+
     /**
      * Show information of this commit in a certain format.
      */
