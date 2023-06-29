@@ -370,6 +370,18 @@ public class Repository {
     public static void checkoutBranch(String branchName) {
         if (getBranch(branchName) == null)
             Utils.exit("No such branch exists.");
+        if (branchName.equals(getRef("HEAD")))
+            Utils.exit("No need to checkout the current branch.");
+
+        Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));
+        if (Utils.plainFilenamesIn(CWD) != null) {
+            for (String s : Utils.plainFilenamesIn(CWD)) {
+                File f = new File(s);
+                if (!new Blob(f).sha1().equals(current.sha1()))
+                    Utils.exit("There is an untracked file in the way; delete it, or add and commit it first.");
+            }
+        }
+
         checkoutCommit(getBranch(branchName));
         setRef("HEAD", branchName);
     }

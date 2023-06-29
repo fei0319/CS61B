@@ -122,8 +122,6 @@ public interface GitletObject extends Serializable {
      * @return full object name, or null if no object matches the abbreviation
      */
     static String autocomplete(String objectName) {
-        if (objectName.length() == 40)
-            return objectName;
         for (GitletObject object : listObjects()) {
             if (object.sha1().startsWith(objectName))
                 return object.sha1();
