@@ -164,6 +164,10 @@ public class Repository {
      * @param message message for the commit
      */
     public static void commit(String message) {
+        commit(message, null);
+    }
+
+    private static void commit(String message, String parent) {
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));
 
@@ -175,6 +179,8 @@ public class Repository {
         }
 
         Commit commit = current.nextCommit(message, stagingArea);
+        if (parent != null)
+            commit.addParent(parent);
         commit.store();
         setBranch(getRef("HEAD"), commit.sha1());
         stagingArea.store();
@@ -470,6 +476,7 @@ public class Repository {
         changedFiles.addAll(List.of(deltaThis.stagedFiles()));
         changedFiles.addAll(List.of(deltaThat.stagedFiles()));
 
+        boolean encounteredConflict = false;
         for (File f : changedFiles) {
             if (deltaThis.hasFile(f) && deltaThat.hasFile(f)) {
                 String inThis = deltaThis.getFile(f),
@@ -477,7 +484,9 @@ public class Repository {
 
                 if ((inThis == null && inThat != null) ||
                         (inThis != null && !inThis.equals(inThat))) {
-                    // TODO: Handle the conflict
+                    Blob.conflict(current.getFile(f), branch.getFile(f)).saveAs(f);
+                    encounteredConflict = true;
+                    staged.add(current, f);
                 }
             } else if (deltaThat.hasFile(f)) {
                 String s = branch.getFile(f);
@@ -491,5 +500,11 @@ public class Repository {
                 }
             }
         }
+
+        staged.store();
+        commit(String.format("Merged %s into %s.", branch.sha1(), current.sha1()),
+                branch.sha1());
+        if (encounteredConflict)
+            Utils.exit("Encountered a merge conflict.");
     }
 }

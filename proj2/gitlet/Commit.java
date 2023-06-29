@@ -79,6 +79,17 @@ public class Commit implements GitletObject {
         Utils.message("");
     }
 
+    /**
+     * Append a new parent to the commit.
+     *
+     * @param parent parent to append
+     */
+    public void addParent(String parent) {
+        List<String> list = new ArrayList<>(List.of(this.parents));
+        list.add(parent);
+        this.parents = list.toArray(new String[0]);
+    }
+
     public String[] getParents() {
         return parents;
     }

@@ -20,6 +20,26 @@ public class Blob implements GitletObject {
         this.data = Utils.readContents(f);
     }
 
+
+    /**
+     * Creates a Blob object from bytes.
+     *
+     * @param data data
+     */
+    public Blob(byte[] data) {
+        this.data = data;
+    }
+
+    public static Blob conflict(String current, String given) {
+        String s = "<<<<<<< HEAD\n" +
+                current +
+                "=======\n" +
+                given +
+                ">>>>>>>";
+        ;
+        return new Blob(s.getBytes());
+    }
+
     /**
      * Save the blob to a file.
      *
