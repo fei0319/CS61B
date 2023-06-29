@@ -75,6 +75,17 @@ public class Repository {
     }
 
     /**
+     * Remove the specified branch. No specification for
+     * non-existent branch.
+     *
+     * @param branchName branch to delete
+     */
+    public static void removeBranch(String branchName) {
+        File f = Utils.join(GITLET_REF_DIR, branchName);
+        f.delete();
+    }
+
+    /**
      * Get the SHA-1 value of the specified ref.
      * If the specified ref is HEAD, will return
      * the branch relating to it instead.
@@ -371,8 +382,24 @@ public class Repository {
      * @param branchName branch to create
      */
     public static void branch(String branchName) {
-        if (getBranch(branchName) == null)
+        if (getBranch(branchName) != null)
             Utils.exit("A branch with that name already exists.");
         setBranch(branchName, getBranch(getRef("HEAD")));
+    }
+
+    /**
+     * Deletes the branch with the given name. This only means to delete
+     * the pointer associated with the branch; it does not mean to delete
+     * all commits that were created under the branch, or anything like
+     * that.
+     *
+     * @param branchName branch to delete
+     */
+    public static void rmBranch(String branchName) {
+        if (getBranch(branchName) == null)
+            Utils.exit("A branch with that name does not exist.");
+        if (getRef("HEAD").equals(branchName))
+            Utils.exit("Cannot remove the current branch.");
+        removeBranch(branchName);
     }
 }

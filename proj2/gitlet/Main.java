@@ -19,6 +19,9 @@ public class Main {
         if (!firstArg.equals("init") && !Repository.GITLET_DIR.exists()) {
             Utils.exit("Not in an initialized Gitlet directory.");
         }
+        /**
+         * TODO: Add argument checking for commands
+         */
         switch (firstArg) {
             case "init":
                 Repository.init();
@@ -54,6 +57,9 @@ public class Main {
                 break;
             case "branch":
                 Repository.branch(args[1]);
+                break;
+            case "rm-branch":
+                Repository.rmBranch(args[1]);
                 break;
             // TODO: FILL THE REST IN
             default:
