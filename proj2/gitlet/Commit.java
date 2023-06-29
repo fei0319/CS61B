@@ -65,6 +65,11 @@ public class Commit implements GitletObject {
         return Utils.sha1((Object) Utils.serialize(this));
     }
 
+    @Override
+    public int hashCode() {
+        return sha1().hashCode();
+    }
+
     /**
      * Show information of this commit in a certain format.
      */
