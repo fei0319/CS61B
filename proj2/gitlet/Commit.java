@@ -204,9 +204,7 @@ public class Commit implements GitletObject {
             }
         }
 
-        if (common.size() != 1) {
-            Utils.message("Common.size() is %d\n", common.size());
-        }
+        assert common.size() == 1;
         return common.iterator().next();
     }
 }
