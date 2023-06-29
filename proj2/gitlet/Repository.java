@@ -518,7 +518,7 @@ public class Repository {
         }
 
         staged.store();
-        commit(String.format("Merged %s into %s.", branch.sha1(), current.sha1()),
+        commit(String.format("Merged %s into %s.", branchName, getRef("HEAD")),
                 branch.sha1());
         if (encounteredConflict)
             Utils.exit("Encountered a merge conflict.");
