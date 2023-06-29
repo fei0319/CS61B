@@ -349,15 +349,15 @@ public class Repository {
      */
     private static void checkoutCommit(String commitName) {
         Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));
+        Commit commit = (Commit) GitletObject.read(commitName);
         if (Utils.plainFilenamesIn(CWD) != null) {
             for (String s : Utils.plainFilenamesIn(CWD)) {
                 File f = new File(s);
-                if (!new Blob(f).sha1().equals(current.getFile(f)))
+                if (!new Blob(f).sha1().equals(current.getFile(f)) && commit.hasFile(f))
                     Utils.exit("There is an untracked file in the way; delete it, or add and commit it first.");
             }
         }
-        
-        Commit commit = (Commit) GitletObject.read(commitName);
+
         clearCWD();
 
         assert commit != null;
