@@ -428,4 +428,68 @@ public class Repository {
         checkoutCommit(commitName);
         setBranch(getRef("HEAD"), commitName);
     }
+
+    /**
+     * Merges the specified branch to current branch.
+     * For each file, if it is changed in exactly one branch
+     * since the diverged point, checks it out and stages it
+     * for commit; if it is changed in both branches but in
+     * the same way, leaves it as it is; otherwise, it is
+     * considered to be a conflict.
+     *
+     * @param branchName branch to merge with
+     */
+    public static void merge(String branchName) {
+        Staged staged = (Staged) GitletObject.read(getRef("STAGED"));
+        if (!staged.isEmpty())
+            Utils.exit("You have uncommitted changes.");
+
+        if (GitletObject.read(getBranch(branchName)) == null)
+            Utils.exit("A branch with that name does not exist.");
+
+        if (branchName.equals(getRef("HEAD")))
+            Utils.exit("Cannot merge a branch with itself.");
+
+        Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD"))),
+                branch = (Commit) GitletObject.read(getBranch(branchName));
+        assert current != null;
+
+        Commit div = Commit.lowestCommonAncestor(current, branch);
+
+        if (div.sha1().equals(branch.sha1()))
+            Utils.exit("Given branch is an ancestor of the current branch.");
+        if (div.sha1().equals(current.sha1())) {
+            checkoutBranch(branchName);
+            Utils.exit("Current branch fast-forwarded.");
+        }
+
+        Staged deltaThis = Staged.delta(div, current),
+                deltaThat = Staged.delta(div, branch);
+
+        Set<File> changedFiles = new HashSet<>();
+        changedFiles.addAll(List.of(deltaThis.stagedFiles()));
+        changedFiles.addAll(List.of(deltaThat.stagedFiles()));
+
+        for (File f : changedFiles) {
+            if (deltaThis.hasFile(f) && deltaThat.hasFile(f)) {
+                String inThis = deltaThis.getFile(f),
+                        inThat = deltaThat.getFile(f);
+
+                if ((inThis == null && inThat != null) ||
+                        (inThis != null && !inThis.equals(inThat))) {
+                    // TODO: Handle the conflict
+                }
+            } else if (deltaThat.hasFile(f)) {
+                String s = branch.getFile(f);
+                if (s == null) {
+                    if (f.exists())
+                        f.delete();
+                    staged.stageForRemoval(f);
+                } else {
+                    ((Blob) GitletObject.read(s)).saveAs(f);
+                    staged.add(current, f);
+                }
+            }
+        }
+    }
 }

@@ -1,10 +1,8 @@
 package gitlet;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 import java.io.File;
-import java.util.Map;
 
 /**
  * Represents a gitlet commit object.<br>
@@ -144,5 +142,55 @@ public class Commit implements GitletObject {
      */
     public Boolean hasFile(File f) {
         return tracked.containsKey(f);
+    }
+
+    /**
+     * A helper method based on DFS that adds all ancestor commits including
+     * self to a specified set.
+     *
+     * @param commit    commit who and whose ancestors to be added
+     * @param ancestors set to add to
+     */
+    private static void addToAncestors(Commit commit, Set<Commit> ancestors) {
+        if (ancestors.contains(commit))
+            return;
+        ancestors.add(commit);
+        for (String next : commit.parents)
+            addToAncestors((Commit) GitletObject.read(next), ancestors);
+    }
+
+    /**
+     * Returns a set contains all ancestors and self of the specified commit.
+     *
+     * @param commit commit to get ancestors
+     * @return a set of ancestors and self
+     */
+    public static Set<Commit> ancestors(Commit commit) {
+        HashSet<Commit> result = new HashSet<>();
+        addToAncestors(commit, result);
+        return result;
+    }
+
+    /**
+     * Returns the lowest common ancestor of the
+     * specified two commmits.
+     *
+     * @param a a commit
+     * @param b another commit
+     * @return the lowest common ancestor
+     */
+    public static Commit lowestCommonAncestor(Commit a, Commit b) {
+        Set<Commit> common = ancestors(a);
+        common.retainAll(ancestors(b));
+
+        HashSet<Commit> copy = new HashSet<>(common);
+        for (Commit c : copy) {
+            for (String next : c.parents) {
+                common.remove((Commit) GitletObject.read(next));
+            }
+        }
+
+        assert common.size() == 1;
+        return common.iterator().next();
     }
 }

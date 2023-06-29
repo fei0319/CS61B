@@ -140,4 +140,47 @@ public class Staged implements GitletObject {
             result.add(change.getKey());
         return result.toArray(new File[0]);
     }
+
+    /**
+     * Gets the SHA-1 value of the specified file in
+     * this staging area. Returns null upon situations
+     * when no files were found.
+     *
+     * @param f file to get
+     * @return SHA-1 value of f
+     */
+    public String getFile(File f) {
+        return changes.get(f);
+    }
+
+    /**
+     * Returns a {@link Staged} object represents difference of derived
+     * from base.
+     *
+     * @param base    the base commit
+     * @param derived the derived commit
+     * @return a {@link Staged} object
+     */
+    public static Staged delta(Commit base, Commit derived) {
+        Staged result = new Staged();
+
+        for (Map.Entry<File, String> track : derived.getTracked().entrySet()) {
+            File f = track.getKey();
+            String s = track.getValue();
+            if (base.hasFile(f)) {
+                if (!base.getFile(f).equals(s))
+                    result.changes.put(f, s);
+            } else {
+                result.changes.put(f, s);
+            }
+        }
+
+        for (Map.Entry<File, String> track : base.getTracked().entrySet()) {
+            File f = track.getKey();
+            if (!derived.hasFile(f))
+                result.changes.put(f, null);
+        }
+
+        return result;
+    }
 }
