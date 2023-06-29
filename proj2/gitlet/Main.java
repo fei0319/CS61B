@@ -64,6 +64,9 @@ public class Main {
             case "reset":
                 Repository.reset(args[1]);
                 break;
+            case "merge":
+                Repository.merge(args[1]);
+                break;
             // TODO: FILL THE REST IN
             default:
                 Utils.exit("No command with that name exists.");

@@ -247,13 +247,18 @@ public class Repository {
      * @param message message
      */
     public static void find(String message) {
+        boolean nothingFound = true;
         for (GitletObject object : GitletObject.listObjects()) {
             if (object.getClass().equals(Commit.class)) {
                 Commit commit = (Commit) object;
-                if (commit.getMessage().equals(message))
+                if (commit.getMessage().equals(message)) {
                     Utils.message(commit.sha1());
+                    nothingFound = false;
+                }
             }
         }
+        if (nothingFound)
+            Utils.exit("Found no commit with that message.");
     }
 
     /**
@@ -280,6 +285,7 @@ public class Repository {
         Utils.message("=== Branches ===");
         for (String branch : branches)
             Utils.message((branch.equals(getRef("HEAD")) ? "*" : "") + branch);
+        Utils.message("");
 
         Utils.message("=== Staged Files ===");
         for (File f : staged)
