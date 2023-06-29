@@ -377,7 +377,7 @@ public class Repository {
         if (Utils.plainFilenamesIn(CWD) != null) {
             for (String s : Utils.plainFilenamesIn(CWD)) {
                 File f = new File(s);
-                if (!new Blob(f).sha1().equals(current.sha1()))
+                if (!new Blob(f).sha1().equals(current.getFile(f)))
                     Utils.exit("There is an untracked file in the way; delete it, or add and commit it first.");
             }
         }
