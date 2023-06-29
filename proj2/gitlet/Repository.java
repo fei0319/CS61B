@@ -330,7 +330,27 @@ public class Repository {
     }
 
     /**
-     * Will CLEAR CWD in advance
+     * WILL CLEAR CWD IN ADVANCE
+     * Takes all files in the specified commit and puts them in CWD.
+     * The staging area will also be cleared.
+     * No specification on non-existent commit.
+     *
+     * @param commitName commit to check out
+     */
+    private static void checkoutCommit(String commitName) {
+        Commit commit = (Commit) GitletObject.read(commitName);
+        clearCWD();
+
+        assert commit != null;
+        for (Map.Entry<File, String> track : commit.getTracked().entrySet())
+            ((Blob) GitletObject.read(track.getValue())).saveAs(track.getKey());
+        Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
+        stagingArea.clear();
+        stagingArea.store();
+    }
+
+    /**
+     * WILL CLEAR CWD IN ADVANCE
      * Takes all files in the commit at the head of the given branch, and puts
      * them in the working directory, overwriting the versions of the files that
      * are already there if they exist.
@@ -340,16 +360,8 @@ public class Repository {
     public static void checkoutBranch(String branchName) {
         if (getBranch(branchName) == null)
             Utils.exit("No such branch exists.");
-        Commit commit = (Commit) GitletObject.read(getBranch(branchName));
-        clearCWD();
-
-        assert commit != null;
-        for (Map.Entry<File, String> track : commit.getTracked().entrySet())
-            ((Blob) GitletObject.read(track.getValue())).saveAs(track.getKey());
+        checkoutCommit(getBranch(branchName));
         setRef("HEAD", branchName);
-        Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
-        stagingArea.clear();
-        stagingArea.store();
     }
 
     /**
@@ -401,5 +413,19 @@ public class Repository {
         if (getRef("HEAD").equals(branchName))
             Utils.exit("Cannot remove the current branch.");
         removeBranch(branchName);
+    }
+
+    /**
+     * The command is essentially checkout of an arbitrary commit that
+     * also changes the current branch head.
+     *
+     * @param commitName commit to reset to
+     */
+    public static void reset(String commitName) {
+        commitName = GitletObject.autocomplete(commitName);
+        if (commitName == null)
+            Utils.exit("No commit with that id exists.");
+        checkoutCommit(commitName);
+        setBranch(getRef("HEAD"), commitName);
     }
 }
