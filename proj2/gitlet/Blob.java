@@ -49,7 +49,7 @@ public class Blob implements GitletObject {
                 + current
                 + "=======\n"
                 + given
-                + ">>>>>>>";
+                + ">>>>>>>\n";
         return new Blob(s.getBytes());
     }
 
