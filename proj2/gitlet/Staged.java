@@ -2,13 +2,13 @@ package gitlet;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Represents the staging area and can be converted to a commit.<br>
- * The purpose of implementing GitletObject is to make sure a Stage object can be stored like a GitletObject.
+ * The purpose of implementing GitletObject is to make sure a Stage object
+ * can be stored like a GitletObject.
  *
  * @author Fei Pan
  */

@@ -132,17 +132,18 @@ public class Commit implements GitletObject {
      * Creates a commit from current commit with the specified staging area.
      * The staging area will be cleared afterward.
      *
-     * @param msg     message for the new commit
+     * @param msg         message for the new commit
      * @param stagingArea staging area to derived commit from
      * @return the derived commit
      */
     public Commit nextCommit(String msg, Staged stagingArea) {
         Commit commit = new Commit(msg, new Date(), this.tracked, new String[]{this.sha1()});
         for (Map.Entry<File, String> change : stagingArea.getChanges().entrySet()) {
-            if (change.getValue() == null)
+            if (change.getValue() == null) {
                 commit.tracked.remove(change.getKey());
-            else
+            } else {
                 commit.tracked.put(change.getKey(), change.getValue());
+            }
         }
         stagingArea.clear();
         return commit;
@@ -177,11 +178,13 @@ public class Commit implements GitletObject {
      * @param ancestors set to add to
      */
     private static void addToAncestors(Commit commit, Set<Commit> ancestors) {
-        if (ancestors.contains(commit))
+        if (ancestors.contains(commit)) {
             return;
+        }
         ancestors.add(commit);
-        for (String next : commit.parents)
+        for (String next : commit.parents) {
             addToAncestors((Commit) GitletObject.read(next), ancestors);
+        }
     }
 
     /**

@@ -108,7 +108,8 @@ public interface GitletObject extends Serializable {
     }
 
     /**
-     * Gets the path in which the object will be stored and creates necessary directory along the path.
+     * Gets the path in which the object will be stored and creates necessary
+     * directory along the path.
      *
      * @return the path in which the object stores
      */

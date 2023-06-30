@@ -369,7 +369,8 @@ public class Repository {
             for (String s : Utils.plainFilenamesIn(CWD)) {
                 File f = new File(s);
                 if (!new Blob(f).sha1().equals(current.getFile(f)) && commit.hasFile(f)) {
-                    Utils.exit("There is an untracked file in the way; delete it, or add and commit it first.");
+                    Utils.exit("There is an untracked file in the way;"
+                            + " delete it, or add and commit it first.");
                 }
             }
         }
@@ -525,7 +526,8 @@ public class Repository {
             for (String s : Utils.plainFilenamesIn(CWD)) {
                 File f = new File(s);
                 if (!new Blob(f).sha1().equals(current.getFile(f)) && changedFiles.contains(f)) {
-                    Utils.exit("There is an untracked file in the way; delete it, or add and commit it first.");
+                    Utils.exit("There is an untracked file in the way;" +
+                            " delete it, or add and commit it first.");
                 }
             }
         }
@@ -536,8 +538,8 @@ public class Repository {
                 String inThis = deltaThis.getFile(f),
                         inThat = deltaThat.getFile(f);
 
-                if ((inThis == null && inThat != null) ||
-                        (inThis != null && !inThis.equals(inThat))) {
+                if ((inThis == null && inThat != null)
+                        || (inThis != null && !inThis.equals(inThat))) {
                     Blob.conflict(current.getFile(f), branch.getFile(f)).saveAs(f);
                     encounteredConflict = true;
                     staged.add(current, f);

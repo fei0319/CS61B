@@ -31,6 +31,12 @@ public class Blob implements GitletObject {
     }
 
     public static Blob conflict(String current, String given) {
+        if (current == null) {
+            current = "";
+        }
+        if (given == null) {
+            given = "";
+        }
         String s = "<<<<<<< HEAD\n"
                 + current
                 + "=======\n"
