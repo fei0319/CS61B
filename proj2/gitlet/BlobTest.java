@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.File;
 
 /**
- * Used to test functionality of Blob.
+ * Used to test functionality of {@link Blob}.
  *
  * @author Fei Pan
  */

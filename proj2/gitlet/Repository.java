@@ -167,6 +167,15 @@ public class Repository {
         commit(message, null);
     }
 
+    /**
+     * The commit helper method. Used by {@link Repository#commit(String)}
+     * and {@link Repository#merge(String)}.
+     * If parent is not null, the commit made will have a second parent
+     * being that.
+     *
+     * @param message message for the commit
+     * @param parent  the second parent
+     */
     private static void commit(String message, String parent) {
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD")));

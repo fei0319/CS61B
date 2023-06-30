@@ -65,11 +65,27 @@ public class Commit implements GitletObject {
         return Utils.sha1((Object) Utils.serialize(this));
     }
 
+    /**
+     * Overrode for HashMap purpose. Simply returns
+     * hashCode of its own SHA-1 value.
+     *
+     * @return hash code
+     */
     @Override
     public int hashCode() {
         return sha1().hashCode();
     }
 
+    /**
+     * Overrode for HashMap purpose. Returns true
+     * iff the other object is also a commit and has
+     * the same message as well as the same SHA-1
+     * value.
+     *
+     * @param o the other object
+     * @return true iff o has the same message and
+     * SHA-1 value
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null) {
@@ -78,7 +94,7 @@ public class Commit implements GitletObject {
         if (o.getClass() != Commit.class) {
             return false;
         }
-        return message.equals(((Commit) o).message) && hashCode() == o.hashCode();
+        return message.equals(((Commit) o).message) && sha1() == ((Commit) o).sha1();
     }
 
     /**

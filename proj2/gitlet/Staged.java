@@ -23,6 +23,13 @@ public class Staged implements GitletObject {
     private HashMap<File, String> changes;
 
     /**
+     * Creates an empty staging area object.
+     */
+    public Staged() {
+        changes = new HashMap<>();
+    }
+
+    /**
      * Set the STAGED ref to self as well as store.
      *
      * @return SHA-1 value of the object
@@ -76,13 +83,6 @@ public class Staged implements GitletObject {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Creates an empty staging area object.
-     */
-    public Staged() {
-        changes = new HashMap<>();
     }
 
     /**

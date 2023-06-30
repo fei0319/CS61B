@@ -30,10 +30,23 @@ public class Blob implements GitletObject {
         this.data = data;
     }
 
+    /**
+     * Returns the string content of the blob.
+     *
+     * @return string content
+     */
     public String asString() {
         return new String(data);
     }
 
+    /**
+     * Returns conflict blob derived from two file
+     * version specified by their SHA-1 value
+     *
+     * @param current SHA-1 value of version of the current branch
+     * @param given   SHA-1 value of version of the given branch
+     * @return a blob object with the conflict content
+     */
     public static Blob conflict(String current, String given) {
         if (current == null) {
             current = "";

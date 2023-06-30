@@ -3,9 +3,17 @@ package gitlet;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * Used to test functionality of {@link Commit}.
+ *
+ * @author Fei Pan
+ */
 public class CommitTest {
+    /**
+     * Check whether {@link Commit#ancestors(Commit)} works.
+     */
     @Test
-    public void testLCA() {
+    public void testAncestor() {
         Commit commit = new Commit();
         Commit a = commit.nextCommit("A", new Staged());
         Commit b = a.nextCommit("B", new Staged());
