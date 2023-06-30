@@ -30,12 +30,20 @@ public class Blob implements GitletObject {
         this.data = data;
     }
 
+    public String asString() {
+        return new String(data);
+    }
+
     public static Blob conflict(String current, String given) {
         if (current == null) {
             current = "";
+        } else {
+            current = ((Blob) GitletObject.read(current)).asString();
         }
         if (given == null) {
             given = "";
+        } else {
+            given = ((Blob) GitletObject.read(given)).asString();
         }
         String s = "<<<<<<< HEAD\n"
                 + current

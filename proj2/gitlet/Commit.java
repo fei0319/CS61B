@@ -87,6 +87,9 @@ public class Commit implements GitletObject {
     public void show() {
         Utils.message("===");
         Utils.message("commit %s", sha1());
+        if (parents.length == 2) {
+            Utils.message("Merge: %s %s", parents[0].substring(0, 7), parents[1].substring(0, 7));
+        }
         SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss yyyy Z");
         Utils.message("Date: %s", formatter.format(date));
         Utils.message(message);
