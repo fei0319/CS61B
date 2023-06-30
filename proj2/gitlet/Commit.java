@@ -72,10 +72,12 @@ public class Commit implements GitletObject {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null)
+        if (o == null) {
             return false;
-        if (o.getClass() != Commit.class)
+        }
+        if (o.getClass() != Commit.class) {
             return false;
+        }
         return message.equals(((Commit) o).message) && hashCode() == o.hashCode();
     }
 
@@ -130,12 +132,12 @@ public class Commit implements GitletObject {
      * Creates a commit from current commit with the specified staging area.
      * The staging area will be cleared afterward.
      *
-     * @param message     message for the new commit
+     * @param msg     message for the new commit
      * @param stagingArea staging area to derived commit from
      * @return the derived commit
      */
-    public Commit nextCommit(String message, Staged stagingArea) {
-        Commit commit = new Commit(message, new Date(), tracked, new String[]{this.sha1()});
+    public Commit nextCommit(String msg, Staged stagingArea) {
+        Commit commit = new Commit(msg, new Date(), this.tracked, new String[]{this.sha1()});
         for (Map.Entry<File, String> change : stagingArea.getChanges().entrySet()) {
             if (change.getValue() == null)
                 commit.tracked.remove(change.getKey());

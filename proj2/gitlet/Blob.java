@@ -31,12 +31,11 @@ public class Blob implements GitletObject {
     }
 
     public static Blob conflict(String current, String given) {
-        String s = "<<<<<<< HEAD\n" +
-                current +
-                "=======\n" +
-                given +
-                ">>>>>>>";
-        ;
+        String s = "<<<<<<< HEAD\n"
+                + current
+                + "=======\n"
+                + given
+                + ">>>>>>>";
         return new Blob(s.getBytes());
     }
 

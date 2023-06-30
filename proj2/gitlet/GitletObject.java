@@ -40,11 +40,13 @@ public interface GitletObject extends Serializable {
      * @see GitletObject#readAndDeleteUnused(String)
      */
     static GitletObject read(String s) {
-        if (s == null)
+        if (s == null) {
             return null;
+        }
         File f = getPath(s);
-        if (!f.exists())
+        if (!f.exists()) {
             return null;
+        }
         return Utils.readObject(f, GitletObject.class);
     }
 
@@ -60,8 +62,9 @@ public interface GitletObject extends Serializable {
         GitletObject object = Utils.readObject(getPath(s), GitletObject.class);
         String staged = Repository.getRef("STAGED");
         for (String objectName : list()) {
-            if (!objectName.equals(staged) && read(objectName).getClass().equals(Staged.class))
+            if (!objectName.equals(staged) && read(objectName).getClass().equals(Staged.class)) {
                 delete(objectName);
+            }
         }
         return object;
     }
@@ -84,8 +87,9 @@ public interface GitletObject extends Serializable {
         File objectDir = Utils.join(Repository.GITLET_DIR, "objects");
         ArrayList<String> result = new ArrayList<>();
         for (String prefix : objectDir.list()) {
-            for (String suffix : Utils.join(objectDir, prefix).list())
+            for (String suffix : Utils.join(objectDir, prefix).list()) {
                 result.add(prefix + suffix);
+            }
         }
         return result.toArray(new String[0]);
     }
@@ -97,8 +101,9 @@ public interface GitletObject extends Serializable {
      */
     static GitletObject[] listObjects() {
         ArrayList<GitletObject> result = new ArrayList<>();
-        for (String objectName : list())
+        for (String objectName : list()) {
             result.add(read(objectName));
+        }
         return result.toArray(new GitletObject[0]);
     }
 
@@ -123,8 +128,9 @@ public interface GitletObject extends Serializable {
      */
     static String autocomplete(String objectName) {
         for (GitletObject object : listObjects()) {
-            if (object.sha1().startsWith(objectName))
+            if (object.sha1().startsWith(objectName)) {
                 return object.sha1();
+            }
         }
         return null;
     }

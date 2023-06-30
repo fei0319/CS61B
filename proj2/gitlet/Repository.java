@@ -55,8 +55,9 @@ public class Repository {
      */
     public static String getBranch(String branchName) {
         File f = Utils.join(GITLET_REF_DIR, branchName);
-        if (!f.exists())
+        if (!f.exists()) {
             return null;
+        }
         return Utils.readContentsAsString(f);
     }
 
@@ -133,8 +134,9 @@ public class Repository {
             setBranch("master", initialCommit.sha1());
             setRef("HEAD", "master");
             setRef("STAGED", stagingArea.sha1());
-        } else
+        } else {
             Utils.exit("A Gitlet version-control system already exists in the current directory.");
+        }
     }
 
     /**
@@ -177,8 +179,9 @@ public class Repository {
         }
 
         Commit commit = current.nextCommit(message, stagingArea);
-        if (parent != null)
+        if (parent != null) {
             commit.addParent(parent);
+        }
         commit.store();
         setBranch(getRef("HEAD"), commit.sha1());
         stagingArea.store();
@@ -221,8 +224,9 @@ public class Repository {
         while (true) {
             Commit commit = (Commit) GitletObject.read(currentSHA1);
             commit.show();
-            if (commit.isInitial())
+            if (commit.isInitial()) {
                 break;
+            }
             currentSHA1 = commit.getParents()[0];
         }
     }
@@ -233,8 +237,9 @@ public class Repository {
      */
     public static void globalLog() {
         for (GitletObject object : GitletObject.listObjects()) {
-            if (object.getClass().equals(Commit.class))
+            if (object.getClass().equals(Commit.class)) {
                 ((Commit) object).show();
+            }
         }
     }
 
@@ -255,8 +260,9 @@ public class Repository {
                 }
             }
         }
-        if (nothingFound)
+        if (nothingFound) {
             Utils.exit("Found no commit with that message.");
+        }
     }
 
     /**
@@ -281,18 +287,21 @@ public class Repository {
         removed.sort(null);
 
         Utils.message("=== Branches ===");
-        for (String branch : branches)
+        for (String branch : branches) {
             Utils.message((branch.equals(getRef("HEAD")) ? "*" : "") + branch);
+        }
         Utils.message("");
 
         Utils.message("=== Staged Files ===");
-        for (File f : staged)
+        for (File f : staged) {
             Utils.message(f.getName());
+        }
         Utils.message("");
 
         Utils.message("=== Removed Files ===");
-        for (File f : removed)
+        for (File f : removed) {
             Utils.message(f.getName());
+        }
         Utils.message("");
 
         ArrayList<File> unstaged = new ArrayList<>(), untracked = new ArrayList<>();
@@ -302,29 +311,33 @@ public class Repository {
             if (stagingArea.hasFile(file)) {
                 currentVersion = stagingArea.getChanges().get(file);
             }
-            if (currentVersion == null && !stagingArea.containsRemoval(file))
+            if (currentVersion == null && !stagingArea.containsRemoval(file)) {
                 untracked.add(file);
-            else if (!new Blob(file).sha1().equals(currentVersion))
+            } else if (!new Blob(file).sha1().equals(currentVersion)) {
                 unstaged.add(file);
+            }
         }
 
         Set<File> allTrackedFiles = new HashSet<>(current.getTracked().keySet());
         allTrackedFiles.addAll(stagingArea.getChanges().keySet());
         for (File file : allTrackedFiles) {
-            if (!file.exists() && !stagingArea.containsRemoval(file))
+            if (!file.exists() && !stagingArea.containsRemoval(file)) {
                 unstaged.add(file);
+            }
         }
         unstaged.sort(null);
         untracked.sort(null);
 
         Utils.message("=== Modifications Not Staged For Commit ===");
-        for (File f : unstaged)
+        for (File f : unstaged) {
             Utils.message(f.getName() + (f.exists() ? " (modified)" : " (deleted)"));
+        }
         Utils.message("");
 
         Utils.message("=== Untracked Files ===");
-        for (File f : untracked)
+        for (File f : untracked) {
             Utils.message(f.getName());
+        }
         Utils.message("");
     }
 
@@ -333,10 +346,12 @@ public class Repository {
      */
     private static void clearCWD() {
         List<String> fileNames = Utils.plainFilenamesIn(CWD);
-        if (fileNames == null)
+        if (fileNames == null) {
             return;
-        for (String fileName : fileNames)
+        }
+        for (String fileName : fileNames) {
             new File(fileName).delete();
+        }
     }
 
     /**
@@ -353,16 +368,18 @@ public class Repository {
         if (Utils.plainFilenamesIn(CWD) != null) {
             for (String s : Utils.plainFilenamesIn(CWD)) {
                 File f = new File(s);
-                if (!new Blob(f).sha1().equals(current.getFile(f)) && commit.hasFile(f))
+                if (!new Blob(f).sha1().equals(current.getFile(f)) && commit.hasFile(f)) {
                     Utils.exit("There is an untracked file in the way; delete it, or add and commit it first.");
+                }
             }
         }
 
         clearCWD();
 
         assert commit != null;
-        for (Map.Entry<File, String> track : commit.getTracked().entrySet())
+        for (Map.Entry<File, String> track : commit.getTracked().entrySet()) {
             ((Blob) GitletObject.read(track.getValue())).saveAs(track.getKey());
+        }
         Staged stagingArea = (Staged) GitletObject.readAndDeleteUnused(getRef("STAGED"));
         stagingArea.clear();
         stagingArea.store();
@@ -377,10 +394,12 @@ public class Repository {
      * @param branchName branch to check out
      */
     public static void checkoutBranch(String branchName) {
-        if (getBranch(branchName) == null)
+        if (getBranch(branchName) == null) {
             Utils.exit("No such branch exists.");
-        if (branchName.equals(getRef("HEAD")))
+        }
+        if (branchName.equals(getRef("HEAD"))) {
             Utils.exit("No need to checkout the current branch.");
+        }
 
         checkoutCommit(getBranch(branchName));
         setRef("HEAD", branchName);
@@ -398,13 +417,15 @@ public class Repository {
     public static void checkoutFile(String commitName, String fileName) {
         commitName = GitletObject.autocomplete(commitName);
         GitletObject object = GitletObject.read(commitName);
-        if (object == null)
+        if (object == null) {
             Utils.exit("No commit with that id exists.");
+        }
 
         Commit commit = (Commit) object;
         File f = new File(fileName);
-        if (!commit.hasFile(f))
+        if (!commit.hasFile(f)) {
             Utils.exit("File does not exist in that commit.");
+        }
         ((Blob) GitletObject.read(commit.getFile(f))).saveAs(f);
     }
 
@@ -416,8 +437,9 @@ public class Repository {
      * @param branchName branch to create
      */
     public static void branch(String branchName) {
-        if (getBranch(branchName) != null)
+        if (getBranch(branchName) != null) {
             Utils.exit("A branch with that name already exists.");
+        }
         setBranch(branchName, getBranch(getRef("HEAD")));
     }
 
@@ -430,10 +452,12 @@ public class Repository {
      * @param branchName branch to delete
      */
     public static void rmBranch(String branchName) {
-        if (getBranch(branchName) == null)
+        if (getBranch(branchName) == null) {
             Utils.exit("A branch with that name does not exist.");
-        if (getRef("HEAD").equals(branchName))
+        }
+        if (getRef("HEAD").equals(branchName)) {
             Utils.exit("Cannot remove the current branch.");
+        }
         removeBranch(branchName);
     }
 
@@ -445,8 +469,9 @@ public class Repository {
      */
     public static void reset(String commitName) {
         commitName = GitletObject.autocomplete(commitName);
-        if (commitName == null)
+        if (commitName == null) {
             Utils.exit("No commit with that id exists.");
+        }
         checkoutCommit(commitName);
         setBranch(getRef("HEAD"), commitName);
     }
@@ -463,14 +488,17 @@ public class Repository {
      */
     public static void merge(String branchName) {
         Staged staged = (Staged) GitletObject.read(getRef("STAGED"));
-        if (!staged.isEmpty())
+        if (!staged.isEmpty()) {
             Utils.exit("You have uncommitted changes.");
+        }
 
-        if (GitletObject.read(getBranch(branchName)) == null)
+        if (GitletObject.read(getBranch(branchName)) == null) {
             Utils.exit("A branch with that name does not exist.");
+        }
 
-        if (branchName.equals(getRef("HEAD")))
+        if (branchName.equals(getRef("HEAD"))) {
             Utils.exit("Cannot merge a branch with itself.");
+        }
 
         Commit current = (Commit) GitletObject.read(getBranch(getRef("HEAD"))),
                 branch = (Commit) GitletObject.read(getBranch(branchName));
@@ -478,8 +506,9 @@ public class Repository {
 
         Commit div = Commit.lowestCommonAncestor(current, branch);
 
-        if (div.sha1().equals(branch.sha1()))
+        if (div.sha1().equals(branch.sha1())) {
             Utils.exit("Given branch is an ancestor of the current branch.");
+        }
         if (div.sha1().equals(current.sha1())) {
             checkoutBranch(branchName);
             Utils.exit("Current branch fast-forwarded.");
@@ -495,8 +524,9 @@ public class Repository {
         if (Utils.plainFilenamesIn(CWD) != null) {
             for (String s : Utils.plainFilenamesIn(CWD)) {
                 File f = new File(s);
-                if (!new Blob(f).sha1().equals(current.getFile(f)) && changedFiles.contains(f))
+                if (!new Blob(f).sha1().equals(current.getFile(f)) && changedFiles.contains(f)) {
                     Utils.exit("There is an untracked file in the way; delete it, or add and commit it first.");
+                }
             }
         }
 
@@ -515,8 +545,9 @@ public class Repository {
             } else if (deltaThat.hasFile(f)) {
                 String s = branch.getFile(f);
                 if (s == null) {
-                    if (f.exists())
+                    if (f.exists()) {
                         f.delete();
+                    }
                     staged.stageForRemoval(f);
                 } else {
                     ((Blob) GitletObject.read(s)).saveAs(f);
@@ -528,7 +559,8 @@ public class Repository {
         staged.store();
         commit(String.format("Merged %s into %s.", branchName, getRef("HEAD")),
                 branch.sha1());
-        if (encounteredConflict)
+        if (encounteredConflict) {
             Utils.exit("Encountered a merge conflict.");
+        }
     }
 }
