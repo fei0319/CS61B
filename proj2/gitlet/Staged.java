@@ -51,8 +51,9 @@ public class Staged implements GitletObject {
      * @param file    the file to be added
      */
     public void add(Commit current, File file) {
-        if (!file.exists())
+        if (!file.exists()) {
             Utils.exit("File does not exist.");
+        }
         Blob b = new Blob(file);
         if (b.sha1().equals(current.getFile(file))) {
             changes.remove(file);
@@ -136,8 +137,9 @@ public class Staged implements GitletObject {
      */
     public File[] stagedFiles() {
         ArrayList<File> result = new ArrayList<>();
-        for (Map.Entry<File, String> change : changes.entrySet())
+        for (Map.Entry<File, String> change : changes.entrySet()) {
             result.add(change.getKey());
+        }
         return result.toArray(new File[0]);
     }
 
@@ -168,8 +170,9 @@ public class Staged implements GitletObject {
             File f = track.getKey();
             String s = track.getValue();
             if (base.hasFile(f)) {
-                if (!base.getFile(f).equals(s))
+                if (!base.getFile(f).equals(s)) {
                     result.changes.put(f, s);
+                }
             } else {
                 result.changes.put(f, s);
             }
@@ -177,8 +180,9 @@ public class Staged implements GitletObject {
 
         for (Map.Entry<File, String> track : base.getTracked().entrySet()) {
             File f = track.getKey();
-            if (!derived.hasFile(f))
+            if (!derived.hasFile(f)) {
                 result.changes.put(f, null);
+            }
         }
 
         return result;
