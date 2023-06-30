@@ -94,7 +94,7 @@ public class Commit implements GitletObject {
         if (o.getClass() != Commit.class) {
             return false;
         }
-        return message.equals(((Commit) o).message) && sha1() == ((Commit) o).sha1();
+        return message.equals(((Commit) o).message) && sha1().equals(((Commit) o).sha1());
     }
 
     /**
