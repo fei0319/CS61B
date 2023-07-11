@@ -8,13 +8,58 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+/**
+ * The world generator. The {@link Generator#generate()} method
+ * will return a 2D TETile of pseudorandom rectangular rooms and
+ * hallways connecting those rooms.
+ * Run the {@link Generator#main(String[])} to see a demo.
+ *
+ * @author Fei Pan
+ */
 public class Generator {
-    public static final double RETRY_FACTOR_MULTIPLIER = 0.94;
-    public static final double POSSIBILITY_FOR_EXTRA_SIZE = 0.7;
-    public static final int EXTRA_SIZE = 4;
-    public static final int IGNORE_DISTANCE_LIMIT = 100;
-    public static final double BERNOULLIAN_SIZE_PARAMETER = 0.12;
+    /**
+     * The number of the generator's room generation attempts.
+     */
     public static final int GENERATION_COUNT = 32;
+    /**
+     * In one single room generation, the generator will retry
+     * generation upon failure with a certain possibility. This
+     * possibility will decrease geometrically with common ratio
+     * being {@link Generator#RETRY_FACTOR_MULTIPLIER}.
+     */
+    public static final double RETRY_FACTOR_MULTIPLIER = 0.94;
+    /**
+     * In {@link Generator#randomSize()}, the size is increased
+     * by {@link Generator#EXTRA_SIZE} with possibility {@link
+     * Generator#POSSIBILITY_FOR_EXTRA_SIZE}.
+     */
+    public static final double POSSIBILITY_FOR_EXTRA_SIZE = 0.7;
+    /**
+     * See {@link Generator#POSSIBILITY_FOR_EXTRA_SIZE}.
+     *
+     * @see Generator#POSSIBILITY_FOR_EXTRA_SIZE
+     */
+    public static final int EXTRA_SIZE = 4;
+    /**
+     * The pseudorandom room size is yielded from binomial distribution
+     * B(N, {@link Generator#BINOMIAL_SIZE_PARAMETER}), where N is
+     * the smaller one of {@link Generator#width} and {@link Generator#height}.
+     */
+    public static final double BINOMIAL_SIZE_PARAMETER = 0.12;
+    /**
+     * The generator tends to generate hallways that are not
+     * longer than {@link Generator#DISTANCE_LIMIT}. Those generations
+     * that introduce hallways longer than that will be deserted unless
+     * total number of hallways generation attempts surpasses {@link
+     * Generator#IGNORE_DISTANCE_LIMIT}.
+     */
+    public static final int DISTANCE_LIMIT = 5;
+    /**
+     * See {@link Generator#DISTANCE_LIMIT}.
+     *
+     * @see Generator#DISTANCE_LIMIT
+     */
+    public static final int IGNORE_DISTANCE_LIMIT = 100;
     public static final int TEST_WIDTH = 80;
     public static final int TEST_HEIGHT = 30;
     private int width;
@@ -41,7 +86,7 @@ public class Generator {
         int n = Math.min(width, height);
         int result = RandomUtils.bernoulli(rng, POSSIBILITY_FOR_EXTRA_SIZE) ? 0 : EXTRA_SIZE;
         for (int i = 0; i < n; ++i) {
-            if (RandomUtils.bernoulli(rng, BERNOULLIAN_SIZE_PARAMETER)) {
+            if (RandomUtils.bernoulli(rng, BINOMIAL_SIZE_PARAMETER)) {
                 result += 1;
             }
         }
@@ -225,7 +270,7 @@ public class Generator {
             }
             Pair<Integer, Integer> coord = floorInDirection(tiles, x, y, direction.first, direction.second);
             if (coord != null && ufs.getRoot(coord) != root
-                    && (ignoreDistance || distance(coord, new Pair<>(x, y)) <= 5)) {
+                    && (ignoreDistance || distance(coord, new Pair<>(x, y)) <= DISTANCE_LIMIT)) {
                 available.add(direction);
                 if (root == -1) {
                     root = ufs.getRoot(coord);
