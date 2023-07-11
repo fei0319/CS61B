@@ -9,6 +9,14 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class Generator {
+    public static final double RETRY_FACTOR_MULTIPLIER = 0.94;
+    public static final double POSSIBILITY_FOR_EXTRA_SIZE = 0.7;
+    public static final int EXTRA_SIZE = 4;
+    public static final int IGNORE_DISTANCE_LIMIT = 100;
+    public static final double BERNOULLIAN_SIZE_PARAMETER = 0.12;
+    public static final int GENERATION_COUNT = 32;
+    public static final int TEST_WIDTH = 80;
+    public static final int TEST_HEIGHT = 30;
     private int width;
     private int height;
     private long seed;
@@ -31,27 +39,14 @@ public class Generator {
      */
     private int randomSize() {
         int n = Math.min(width, height);
-        int result = RandomUtils.bernoulli(rng, 0.7) ? 0 : 4;
+        int result = RandomUtils.bernoulli(rng, POSSIBILITY_FOR_EXTRA_SIZE) ? 0 : EXTRA_SIZE;
         for (int i = 0; i < n; ++i) {
-            if (RandomUtils.bernoulli(rng, 0.12)) {
+            if (RandomUtils.bernoulli(rng, BERNOULLIAN_SIZE_PARAMETER)) {
                 result += 1;
             }
         }
         result = Math.max(result, 2);
         return result;
-    }
-
-    /**
-     * C++ style pair.
-     */
-    private class Pair<V1, V2> {
-        public V1 first;
-        public V2 second;
-
-        public Pair(V1 v1, V2 v2) {
-            this.first = v1;
-            this.second = v2;
-        }
     }
 
     /**
@@ -172,22 +167,27 @@ public class Generator {
         return false;
     }
 
+    int distance(Pair<Integer, Integer> a, Pair<Integer, Integer> b) {
+        return Math.abs(a.first - b.first) + Math.abs(a.second - b.second);
+    }
+
     /**
      * Check whether there is a {@link Tileset#FLOOR} tile in
-     * the specified direction.
+     * the specified direction. If there is one, return the
+     * coordination of the certain tile.
      *
-     * @return true iff there is a {@link Tileset#FLOOR} tile
-     * in the direction
+     * @return a {@link Pair} of the coordination or null indicating
+     * no {@link Tileset#FLOOR} being in the direction
      */
-    private boolean hasFloor(TETile[][] tiles, int x, int y, int dirX, int dirY) {
+    private Pair<Integer, Integer> floorInDirection(TETile[][] tiles, int x, int y, int dirX, int dirY) {
         while (inbound(x, y)) {
             if (tiles[x][y] == Tileset.FLOOR) {
-                return true;
+                return new Pair<>(x, y);
             }
             x += dirX;
             y += dirY;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -205,22 +205,51 @@ public class Generator {
     /**
      * Try to create several hallways starting from (x, y).
      */
-    private void tryCreateHallway(TETile[][] tiles, int x, int y) {
+    private void tryCreateHallway(
+            TETile[][] tiles, int x, int y, UnionFindSet ufs, boolean ignoreDistance) {
+        if (tiles[x][y] == Tileset.FLOOR) {
+            return;
+        }
+
         ArrayList<Pair<Integer, Integer>> directions = new ArrayList<>();
         directions.add(new Pair<>(1, 0));
         directions.add(new Pair<>(-1, 0));
         directions.add(new Pair<>(0, 1));
         directions.add(new Pair<>(0, -1));
 
-        int cnt = 0;
+        int root = -1;
+        ArrayList<Pair<Integer, Integer>> available = new ArrayList<>();
         for (Pair<Integer, Integer> direction : directions) {
-            if (hasFloor(tiles, x, y, direction.first, direction.second)) {
-                createHallway(tiles, x, y, direction.first, direction.second);
-                cnt += 1;
-            }
-            if (cnt >= 2) {
+            if (available.size() >= 2) {
                 break;
             }
+            Pair<Integer, Integer> coord = floorInDirection(tiles, x, y, direction.first, direction.second);
+            if (coord != null && ufs.getRoot(coord) != root
+                    && (ignoreDistance || distance(coord, new Pair<>(x, y)) <= 5)) {
+                available.add(direction);
+                if (root == -1) {
+                    root = ufs.getRoot(coord);
+                }
+            }
+        }
+
+        if (available.size() >= 2) {
+            for (Pair<Integer, Integer> direction : available) {
+                createHallway(tiles, x, y, direction.first, direction.second);
+            }
+        }
+    }
+
+    private void addHallways(TETile[][] tiles) {
+        UnionFindSet ufs = new UnionFindSet(width, height);
+        ufs.update(tiles);
+
+        int cnt = 0;
+        while (ufs.count(tiles) > 1) {
+            cnt += 1;
+            int x = RandomUtils.uniform(rng, width), y = RandomUtils.uniform(rng, height);
+            tryCreateHallway(tiles, x, y, ufs, cnt > IGNORE_DISTANCE_LIMIT);
+            ufs.update(tiles);
         }
     }
 
@@ -237,23 +266,19 @@ public class Generator {
 
         double factor = 1.0;
 
-        for (int i = 0; i < 32; ++i) {
+        for (int i = 0; i < GENERATION_COUNT; ++i) {
             generateRoom(tiles, factor);
-            factor *= 0.94;
+            factor *= RETRY_FACTOR_MULTIPLIER;
         }
 
-        for (int i = 0; i < 16; ++i) {
-            int x = RandomUtils.uniform(rng, width), y = RandomUtils.uniform(rng, height);
-
-            tryCreateHallway(tiles, x, y);
-        }
+        addHallways(tiles);
 
         addBrim(tiles, Tileset.WALL);
         return tiles;
     }
 
-    public static void main(String args[]) {
-        int w = 80, h = 30;
+    public static void main(String[] args) {
+        int w = TEST_WIDTH, h = TEST_HEIGHT;
         var gen = new Generator(w, h, new Random().nextInt());
         var tiles = gen.generate();
 
