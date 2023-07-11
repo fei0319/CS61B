@@ -1,14 +1,17 @@
 package byow.Core;
 
-/**
- * C++ style pair.
- */
-class Pair<V1, V2> {
-    public V1 first;
-    public V2 second;
+import byow.TileEngine.TETile;
 
-    public Pair(V1 v1, V2 v2) {
-        this.first = v1;
-        this.second = v2;
+public class Utils {
+    /**
+     * Load the world from the specified TETile[][] tiles.
+     * All stuff of tiles will be simply copied to world.
+     */
+    public static void loadFrom(TETile[][] world, TETile[][] tiles) {
+        for (int i = 0; i < world.length; ++i) {
+            for (int j = 0; j < world[i].length; ++j) {
+                world[i][j] = tiles[i][j];
+            }
+        }
     }
 }
