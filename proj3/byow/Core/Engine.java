@@ -94,7 +94,7 @@ public class Engine {
                     break;
             }
         }
-        return null;
+        return world;
     }
 
     private void newWorld(InputSource in, boolean display) {
