@@ -2,12 +2,30 @@ package byow.Core;
 
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
 
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    private TETile[][] world;
+    private Pair<Integer, Integer> location;
+    private TERenderer render;
+
+    public Engine() {
+        world = new TETile[WIDTH][HEIGHT];
+        location = new Pair<>(0, 0);
+        render = new TERenderer();
+    }
+
+    private void displayWorld() {
+        render.initialize(WIDTH, HEIGHT);
+        TETile[][] showWorld = new TETile[WIDTH][HEIGHT];
+        Utils.loadFrom(showWorld, world);
+        showWorld[location.first][location.second] = Tileset.AVATAR;
+        render.renderFrame(showWorld);
+    }
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -61,21 +79,16 @@ public class Engine {
      * @return the final status of the world
      */
     private TETile[][] interact(InputSource in, boolean display) {
-        TERenderer render = new TERenderer();
-        render.initialize(WIDTH, HEIGHT);
-
-        TETile[][] world = new TETile[WIDTH][HEIGHT];
-
         while (in.possibleNextInput()) {
             String operand = String.valueOf(in.getNextKey()).toUpperCase();
             switch (operand) {
                 case "N":
-                    newWorld(in, display, render, world);
+                    newWorld(in, display);
                     break;
                 case "L":
                     break;
                 case ":":
-                    quitGame(in, display, render, world);
+                    quitGame(in, display);
                     break;
                 default:
                     break;
@@ -84,7 +97,7 @@ public class Engine {
         return null;
     }
 
-    private void newWorld(InputSource in, boolean display, TERenderer render, TETile[][] world) {
+    private void newWorld(InputSource in, boolean display) {
         StringBuilder seed = new StringBuilder();
         String operand = String.valueOf(in.getNextKey()).toUpperCase();
         while (!operand.equals("S")) {
@@ -96,14 +109,23 @@ public class Engine {
         Utils.loadFrom(world, gen.generate());
 
         if (display) {
-            render.renderFrame(world);
+            displayWorld();
         }
     }
 
-    private void quitGame(InputSource in, boolean display, TERenderer render, TETile[][] world) {
+    private void quitGame(InputSource in, boolean display) {
         String operand = String.valueOf(in.getNextKey()).toUpperCase();
         if (operand.equals("Q")) {
             // TODO: Fill in QuitGame
+        }
+    }
+
+    private void move(Pair<Integer, Integer> d, boolean display) {
+        location.first += d.first;
+        location.second += d.second;
+
+        if (display) {
+            displayWorld();
         }
     }
 }
