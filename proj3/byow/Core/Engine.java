@@ -53,6 +53,13 @@ public class Engine {
         return interact(in, false);
     }
 
+    /**
+     * Interact with the engine with a {@link InputSource}.
+     *
+     * @param in      the input source
+     * @param display whether to display the UI when interacting
+     * @return the final status of the world
+     */
     private TETile[][] interact(InputSource in, boolean display) {
         TERenderer render = new TERenderer();
         render.initialize(WIDTH, HEIGHT);
@@ -67,7 +74,8 @@ public class Engine {
                     break;
                 case "L":
                     break;
-                case "Q":
+                case ":":
+                    quitGame(in, display, render, world);
                     break;
                 default:
                     break;
@@ -89,6 +97,13 @@ public class Engine {
 
         if (display) {
             render.renderFrame(world);
+        }
+    }
+
+    private void quitGame(InputSource in, boolean display, TERenderer render, TETile[][] world) {
+        String operand = String.valueOf(in.getNextKey()).toUpperCase();
+        if (operand.equals("Q")) {
+            // TODO: Fill in QuitGame
         }
     }
 }
