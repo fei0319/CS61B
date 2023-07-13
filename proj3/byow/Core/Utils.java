@@ -85,4 +85,8 @@ public class Utils {
     static void writeObject(File file, Serializable obj) {
         writeContents(file, serialize(obj));
     }
+
+    public static boolean inbound(int width, int height, int x, int y) {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
 }

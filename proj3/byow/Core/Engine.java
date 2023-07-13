@@ -3,9 +3,12 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
+import java.util.Random;
 
 public class Engine implements Serializable {
     TERenderer ter = new TERenderer();
@@ -120,16 +123,38 @@ public class Engine implements Serializable {
         return worldWithAvatar();
     }
 
-    private void newWorld(InputSource in, boolean display) {
+    private long readSeed(InputSource in, boolean display) {
         StringBuilder seed = new StringBuilder();
+        StdDraw.clear(new Color(0, 0, 0));
+        StdDraw.show();
+
+        Font font = StdDraw.getFont();
+        StdDraw.setFont(new Font("Monaco", Font.BOLD, 24));
+
         String operand = String.valueOf(in.getNextKey()).toUpperCase();
         while (!operand.equals("S")) {
             seed.append(operand);
+            StdDraw.clear(new Color(0, 0, 0));
+            StdDraw.text((double) WIDTH / 2, (double) HEIGHT / 2, seed.toString());
+            StdDraw.show();
             operand = String.valueOf(in.getNextKey()).toUpperCase();
         }
 
-        gen = new Generator(WIDTH, HEIGHT, Long.parseLong(seed.toString()));
+        StdDraw.setFont(font);
+        return Long.parseLong(seed.toString());
+    }
+
+    private void newWorld(InputSource in, boolean display) {
+        long seed = readSeed(in, display);
+
+        gen = new Generator(WIDTH, HEIGHT, seed);
         Utils.loadFrom(world, gen.generate());
+
+        while (!canHoldAvatar(location.first, location.second)) {
+            Random rng = gen.getRng();
+            int x = RandomUtils.uniform(rng, WIDTH), y = RandomUtils.uniform(rng, HEIGHT);
+            location = new Pair<>(x, y);
+        }
 
         if (display) {
             displayWorld();
@@ -165,8 +190,23 @@ public class Engine implements Serializable {
         }
     }
 
+    private boolean canHoldAvatar(int x, int y) {
+        return world[x][y].character() == Tileset.FLOOR.character();
+    }
+
+    private boolean validMove(int dx, int dy) {
+        int x = location.first + dx, y = location.second + dy;
+        if (!Utils.inbound(WIDTH, HEIGHT, x, y)) {
+            return false;
+        }
+        if (!canHoldAvatar(x, y)) {
+            return false;
+        }
+        return true;
+    }
+
     private void move(Pair<Integer, Integer> d, boolean display) {
-        if (inGame) {
+        if (inGame && validMove(d.first, d.second)) {
             location.first += d.first;
             location.second += d.second;
         }

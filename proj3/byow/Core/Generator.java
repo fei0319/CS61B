@@ -75,6 +75,9 @@ public class Generator implements Serializable {
         this.rng = new Random(seed);
     }
 
+    public Random getRng() {
+        return rng;
+    }
 
     /**
      * Get a random size for the room.
@@ -143,10 +146,6 @@ public class Generator implements Serializable {
         return result;
     }
 
-    private boolean inbound(int x, int y) {
-        return x >= 0 && x < width && y >= 0 && y < height;
-    }
-
     private boolean hasNeighbor(TETile[][] tiles, int x, int y, TETile tile) {
         ArrayList<Pair<Integer, Integer>> neighbors = new ArrayList<>();
         neighbors.add(new Pair<>(1, 1));
@@ -160,7 +159,7 @@ public class Generator implements Serializable {
 
         for (Pair<Integer, Integer> neighbor : neighbors) {
             int dx = neighbor.first, dy = neighbor.second;
-            if (inbound(x + dx, y + dy) && tiles[x + dx][y + dy] == tile) {
+            if (Utils.inbound(width, height, x + dx, y + dy) && tiles[x + dx][y + dy] == tile) {
                 return true;
             }
         }
@@ -226,7 +225,7 @@ public class Generator implements Serializable {
      * no {@link Tileset#FLOOR} being in the direction
      */
     private Pair<Integer, Integer> floorInDirection(TETile[][] tiles, int x, int y, int dirX, int dirY) {
-        while (inbound(x, y)) {
+        while (Utils.inbound(width, height, x, y)) {
             if (tiles[x][y] == Tileset.FLOOR) {
                 return new Pair<>(x, y);
             }
@@ -245,7 +244,7 @@ public class Generator implements Serializable {
             tiles[x][y] = Tileset.FLOOR;
             x += dirX;
             y += dirY;
-        } while (inbound(x, y) && tiles[x][y] != Tileset.FLOOR);
+        } while (Utils.inbound(width, height, x, y) && tiles[x][y] != Tileset.FLOOR);
     }
 
     /**
