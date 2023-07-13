@@ -4,6 +4,7 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -16,7 +17,7 @@ import java.util.Random;
  *
  * @author Fei Pan
  */
-public class Generator {
+public class Generator implements Serializable {
     /**
      * The number of the generator's room generation attempts.
      */

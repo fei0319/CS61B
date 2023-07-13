@@ -1,9 +1,11 @@
 package byow.Core;
 
+import java.io.Serializable;
+
 /**
  * C++ style pair.
  */
-class Pair<V1, V2> {
+class Pair<V1, V2> implements Serializable {
     public V1 first;
     public V2 second;
 

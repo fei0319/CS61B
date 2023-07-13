@@ -4,27 +4,45 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
-public class Engine {
+import java.io.File;
+import java.io.Serializable;
+
+public class Engine implements Serializable {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    public static final File SAVE_FILE = new File("savefile.txt");
     private TETile[][] world;
     private Pair<Integer, Integer> location;
     private TERenderer render;
+    private Generator gen;
+    private boolean inGame;
 
     public Engine() {
         world = new TETile[WIDTH][HEIGHT];
         location = new Pair<>(0, 0);
         render = new TERenderer();
+        inGame = false;
     }
 
-    private void displayWorld() {
-        render.initialize(WIDTH, HEIGHT);
+    private TETile[][] worldWithAvatar() {
         TETile[][] showWorld = new TETile[WIDTH][HEIGHT];
         Utils.loadFrom(showWorld, world);
         showWorld[location.first][location.second] = Tileset.AVATAR;
-        render.renderFrame(showWorld);
+        return showWorld;
+    }
+
+    private void displayWorld() {
+        inGame = true;
+
+        render.renderFrame(worldWithAvatar());
+    }
+
+    private void displayTitle() {
+        inGame = false;
+
+        render.drawTitle();
     }
 
     /**
@@ -79,22 +97,27 @@ public class Engine {
      * @return the final status of the world
      */
     private TETile[][] interact(InputSource in, boolean display) {
+        if (display) {
+            render.initialize(WIDTH, HEIGHT);
+            displayTitle();
+        }
+
         while (in.possibleNextInput()) {
             String operand = String.valueOf(in.getNextKey()).toUpperCase();
             switch (operand) {
-                case "N":
-                    newWorld(in, display);
-                    break;
-                case "L":
-                    break;
-                case ":":
-                    quitGame(in, display);
-                    break;
-                default:
-                    break;
+                case "N" -> newWorld(in, display);
+                case "L" -> loadWorld(display);
+                case ":" -> quitGame(in, display);
+                case "Q" -> quitProgram();
+                case "W" -> move(new Pair<>(0, 1), display);
+                case "S" -> move(new Pair<>(0, -1), display);
+                case "A" -> move(new Pair<>(-1, 0), display);
+                case "D" -> move(new Pair<>(1, 0), display);
+                default -> {
+                }
             }
         }
-        return world;
+        return worldWithAvatar();
     }
 
     private void newWorld(InputSource in, boolean display) {
@@ -105,8 +128,21 @@ public class Engine {
             operand = String.valueOf(in.getNextKey()).toUpperCase();
         }
 
-        Generator gen = new Generator(WIDTH, HEIGHT, Long.parseLong(seed.toString()));
+        gen = new Generator(WIDTH, HEIGHT, Long.parseLong(seed.toString()));
         Utils.loadFrom(world, gen.generate());
+
+        if (display) {
+            displayWorld();
+        }
+    }
+
+    private void loadWorld(boolean display) {
+        Engine status = Utils.readObject(SAVE_FILE, this.getClass());
+        this.world = status.world;
+        this.location = status.location;
+        this.render = status.render;
+        this.gen = status.gen;
+        this.inGame = status.inGame;
 
         if (display) {
             displayWorld();
@@ -116,13 +152,24 @@ public class Engine {
     private void quitGame(InputSource in, boolean display) {
         String operand = String.valueOf(in.getNextKey()).toUpperCase();
         if (operand.equals("Q")) {
-            // TODO: Fill in QuitGame
+            if (inGame) {
+                Utils.writeObject(SAVE_FILE, this);
+            }
+            if (display) {
+                displayTitle();
+            }
         }
     }
 
+    private void quitProgram() {
+        System.exit(0);
+    }
+
     private void move(Pair<Integer, Integer> d, boolean display) {
-        location.first += d.first;
-        location.second += d.second;
+        if (inGame) {
+            location.first += d.first;
+            location.second += d.second;
+        }
 
         if (display) {
             displayWorld();
