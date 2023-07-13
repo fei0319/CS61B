@@ -152,9 +152,7 @@ public class Engine implements Serializable {
     private void quitGame(InputSource in, boolean display) {
         String operand = String.valueOf(in.getNextKey()).toUpperCase();
         if (operand.equals("Q")) {
-            if (inGame) {
-                Utils.writeObject(SAVE_FILE, this);
-            }
+            Utils.writeObject(SAVE_FILE, this);
             if (display) {
                 displayTitle();
             }
@@ -162,7 +160,9 @@ public class Engine implements Serializable {
     }
 
     private void quitProgram() {
-        System.exit(0);
+        if (!inGame) {
+            System.exit(0);
+        }
     }
 
     private void move(Pair<Integer, Integer> d, boolean display) {
